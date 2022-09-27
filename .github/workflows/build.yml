@@ -57,8 +57,6 @@ jobs:
       with:
         name: wheel
         path: ${{ github.workspace }}/dist/
-    - name: Install wheel
-      run: pip install dist/circuitpython_homie*.whl
     - name: Build docs
       working-directory: docs
       run: sphinx-build -E -W -b html . _build/html

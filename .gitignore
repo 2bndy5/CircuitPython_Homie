@@ -51,3 +51,6 @@ _build
 .idea
 .vscode/
 *~
+
+# don't commit any secrets used in the examples
+secrets.py

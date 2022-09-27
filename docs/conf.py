@@ -1,7 +1,13 @@
 """Docs config settings."""
 import datetime
+from pathlib import PurePath
+import sys
 
 # pylint: disable=invalid-name,redefined-builtin
+
+pkg_dir = str(PurePath(__file__).parent.parent)
+sys.path.insert(0, pkg_dir)
+
 
 # -- General configuration ------------------------------------------------
 
@@ -11,6 +17,7 @@ import datetime
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
+    "sphinx.ext.viewcode",
     "sphinx_immaterial",
     "sphinx_immaterial.graphviz",
 ]
@@ -29,6 +36,14 @@ intersphinx_mapping = {
     "CircuitPython": ("https://docs.circuitpython.org/en/latest/", None),
     "adafruit_circuitpython_minimqtt": (
         "https://docs.circuitpython.org/projects/minimqtt/en/latest/",
+        None,
+    ),
+    "adafruit_datatime": (
+        "https://docs.circuitpython.org/projects/datetime/en/latest/",
+        None,
+    ),
+    "adafruit_ntp": (
+        "https://docs.circuitpython.org/projects/ntp/en/latest/",
         None,
     ),
 }
@@ -92,6 +107,7 @@ html_theme = "sphinx_immaterial"
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+html_css_files = ["extra_css.css"]
 
 # The name of an image file (relative to this directory) to use as a favicon of
 # the docs.  This file should be a Windows icon file (.ico) being 16x16 or 32x32
@@ -105,8 +121,8 @@ htmlhelp_basename = "CircuitPython_Homie_Librarydoc"
 html_title = "CircuitPython-Homie"
 
 html_theme_options = {
-    "repo_url": "https://github.com/2bndy5/CircuitPython-Homie",
-    "repo_name": "CircuitPython-Homie",
+    "repo_url": "https://github.com/2bndy5/CircuitPython_Homie",
+    "repo_name": "CircuitPython_Homie",
     "repo_type": "Github",
     "icon": {
         "repo": "fontawesome/brands/github",
@@ -141,6 +157,9 @@ html_theme_options = {
         },
     ],
 }
+object_description_options = [
+    ("py:parameter", dict(include_in_toc=False)),
+]
 
 master_doc = "index"
 

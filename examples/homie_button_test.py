@@ -1,4 +1,6 @@
-"""A simple example of OpenHab controlling the on-board LED.
+"""A simple example of OpenHab manipulating a boolean state changed by the
+on-board button. As a form of visual feedback, the on-board LED is used to
+reflect the boolean state.
 
 This was tested on:
 
@@ -8,11 +10,12 @@ This was tested on:
 # pylint: disable=import-error,no-member,unused-argument,invalid-name
 import time
 import board
+import digitalio
 import socketpool  # type: ignore
 import wifi  # type: ignore
 from adafruit_minimqtt.adafruit_minimqtt import MQTT, MMQTTException
 from circuitpython_homie import HomieDevice, HomieNode
-from circuitpython_homie.recipes import PropertyRGB
+from circuitpython_homie.recipes import PropertyBool
 
 if not hasattr(board, "NEOPIXEL"):
     # assume board has a builtin dotstar
@@ -23,6 +26,8 @@ else:
     import neopixel
 
     pixel = neopixel.NeoPixel(board.NEOPIXEL, 1)
+pixel.brightness = 0.5  # go easy on the eyes
+pixel.fill((255, 0, 0))  # this example's initial value of the switch state is False
 
 # Get wifi details and more from a secrets.py file
 try:
@@ -41,26 +46,32 @@ print("Using MQTT broker: {}:{}".format(mqtt_settings["broker"], mqtt_settings["
 pool = socketpool.SocketPool(wifi.radio)
 mqtt_client = MQTT(**mqtt_settings, socket_pool=pool)
 
+# instantiate the button and it's state
+# declare the state as a list because using `global` is a bad habit
+button_pin = board.BUTTON  # change this accordingly
+button = digitalio.DigitalInOut(button_pin)
+button.switch_to_input(digitalio.Pull.UP)
+button_value = button.value  # for edge detection
+
 # create the objects that describe our device
-device = HomieDevice(mqtt_client, "my device name", "lib-simple-test-id")
-led_node = HomieNode("light", "RGB DotStar")
-led_property = PropertyRGB("color")
+device = HomieDevice(mqtt_client, "my device name", "lib-button-id")
+switch_node = HomieNode("light", "Typical Lamp")
+switch_property = PropertyBool("switch")
 
 # append the objects to the device's attributes
-led_node.properties.append(led_property)
-device.nodes.append(led_node)
+switch_node.properties.append(switch_property)
+device.nodes.append(switch_node)
 
-# add a callback to remotely control the LED
-def change_color(client: MQTT, topic: str, message: str):
-    """Change the color of the LED based on the message from the broker."""
-    print("--> broker said color is now", message)
-    # echo confirmation back to broker and convert to an 3-tuple of integers
-    color = device.set_property(led_property, message)
-    pixel.fill(color)
-    print("<-- color is now", repr(color))
+# add a callback to remotely control the switch_property
+def change_state(client: MQTT, topic: str, message: str):
+    """Change the switch's state according to message from the broker."""
+    print("--> broker said switch_state is now", message)
+    # echo confirmation back to broker
+    switch_state = device.set_property(switch_property, message)
+    print("<-- switch state is now", switch_state)
 
 
-led_property.callback = change_color
+switch_property.callback = change_state
 
 
 def on_connected(*args):
@@ -75,20 +86,29 @@ def on_disconnected(client: MQTT, user_data, rc):
     device.begin()
 
 
-mqtt_client.on_connect = on_connected
 mqtt_client.on_disconnect = on_disconnected
+mqtt_client.on_connect = on_connected
 
 # connect to the broker and publish/subscribe the device's topics
 device.begin()
-pixel.fill(led_property.validate(led_property()))
 
 # a forever loop
 try:
     refresh_last = time.time()
     while True:
         try:
+            # toggle the switch's state on button press
+            if button_value != button.value and not button.value:
+                button_value = button.value
+                state = device.set_property(
+                    switch_property, not switch_property.validate(switch_property())
+                )
+                print("button was pressed", "<(!)>" if state else " (-) ")
+                pixel.fill((0, 255, 0) if state else (255, 0, 0))
+            elif button.value and button_value != button.value:
+                button_value = button.value
             now = time.time()
-            if now - refresh_last > 0.5:  # refresh every 0.5 seconds
+            if now - refresh_last >= 1:  # refresh every 1 seconds
                 refresh_last = now
                 assert mqtt_client.is_connected()
                 mqtt_client.loop()

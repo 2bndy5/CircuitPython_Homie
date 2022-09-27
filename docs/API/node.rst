@@ -2,5 +2,5 @@
 Homie Node
 ----------
 
-.. autoclass:: circuitpython_homie.nodes.HomieNode
+.. autoclass:: circuitpython_homie.HomieNode
     :members:

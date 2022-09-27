@@ -1,2 +1,4 @@
-adafruit-circuitpython-dotstar
 adafruit-circuitpython-minimqtt
+adafruit-circuitpython-dotstar
+adafruit-circuitpython-neopixel
+adafruit-circuitpython-ntp

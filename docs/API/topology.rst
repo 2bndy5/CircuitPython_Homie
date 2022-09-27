@@ -52,7 +52,7 @@ Simple Example
 
 Let's say you have a board equipped with an ESP32-Sx chip, and you want to broadcast temperature
 and humidity data from a DHT sensor to your MQTT broker for use in OpenHab. Just for fun, we'll
-let OpenHab control your on-board RGB LED too. Structurally this would be organized like, so:
+let OpenHab control your on-board RGB LED too. Structurally, this would be organized like so:
 
 .. graphviz::
     :align: center
@@ -72,7 +72,7 @@ let OpenHab control your on-board RGB LED too. Structurally this would be organi
             shape="record"
         ]
         Temp [
-            label = "<f0> temperate | <f1> attributes"
+            label = "<f0> temperature | <f1> attributes"
             shape = "record"
         ]
         Humid [
