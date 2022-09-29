@@ -33,6 +33,7 @@ __pycache__
 *.pyc
 build/
 dist/
+_version.py
 
 # Sphinx build-specific files
 _build

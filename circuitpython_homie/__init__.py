@@ -8,7 +8,7 @@ See the nodes.py and properties.py for other Homie implementations.
 try:
     from os import uname  # type: ignore
 except ImportError:
-    from platform import uname
+    from platform import uname  # type: ignore
 
 try:
     from typing import List, Dict, Any
@@ -18,7 +18,12 @@ except ImportError:  # pragma: no cover
 import re
 from adafruit_minimqtt.adafruit_minimqtt import MQTT, MMQTTException  # type: ignore
 
-__version__ = "0.0.0+auto.0"
+
+try:
+    from ._version import __version__  # type: ignore
+except ImportError:
+    __version__ = "0.0.0+auto.0"
+
 __repo__ = "https://github.com/2bndy5/CircuitPython_Homie.git"
 
 DEVICE_STATES = [
