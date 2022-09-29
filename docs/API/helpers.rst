@@ -3,21 +3,7 @@ Recipes
 
 .. automodule:: circuitpython_homie.recipes
 
-    Boolean
-    -------
-
-    .. autoclass:: PropertyBool
-        :members: validate
-        :show-inheritance:
-
-    Percent
-    -------
-
-    .. autoclass:: PropertyPercent
-        :members: validate
-        :show-inheritance:
-
-    Color
+    Colors
     -------
 
     .. autoclass:: PropertyRGB
@@ -25,10 +11,30 @@ Recipes
     .. autoclass:: PropertyHSV
         :members:
 
+    Boolean
+    -------
+
+    .. autoclass:: PropertyBool
+        :members: validate
+        :show-inheritance:
+
+    Numbers
+    -------
+
+    .. autoclass:: PropertyPercent
+        :members: validate
+    .. autoclass:: PropertyInt
+        :members: validate
+    .. autoclass:: PropertyFloat
+        :members: validate
+
     Time
     ----
 
     .. autoclass:: PropertyDateTime
+        :members: convert
+        :show-inheritance:
+    .. autoclass:: PropertyDuration
         :members: convert
         :show-inheritance:
 

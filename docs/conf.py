@@ -156,10 +156,32 @@ html_theme_options = {
             },
         },
     ],
+    "toc_title_is_page_title": True,
 }
+
 object_description_options = [
     ("py:parameter", dict(include_in_toc=False)),
 ]
+rst_prolog = """
+.. role:: python(code)
+   :language: python
+   :class: highlight
+.. role:: homie-dev(code)
+   :language: text
+   :class: homie-dev
+.. role:: homie-attr(code)
+   :language: text
+   :class: homie-attr
+.. role:: homie-val(code)
+   :language: text
+   :class: homie-val
+.. role:: homie-prop(code)
+   :language: text
+   :class: homie-prop
+.. role:: homie-node(code)
+   :language: text
+   :class: homie-node
+"""
 
 master_doc = "index"
 

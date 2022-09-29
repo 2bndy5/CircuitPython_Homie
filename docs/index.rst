@@ -1,18 +1,16 @@
 
-.. include:: ../README.rst
-
-Table of Contents
-=================
-
 .. toctree::
+    :hidden:
 
     self
 
 .. toctree::
+    :hidden:
 
     examples
 
 .. toctree::
+    :hidden:
     :caption: API Reference
 
     API/topology
@@ -20,6 +18,8 @@ Table of Contents
     API/node
     API/property
     API/helpers
+
+.. include:: ../README.rst
 
 Indices and tables
 ==================

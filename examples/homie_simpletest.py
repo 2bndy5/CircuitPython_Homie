@@ -44,7 +44,7 @@ mqtt_client = MQTT(**mqtt_settings, socket_pool=pool)
 # create the objects that describe our device
 device = HomieDevice(mqtt_client, "my device name", "lib-simple-test-id")
 led_node = HomieNode("light", "RGB DotStar")
-led_property = PropertyRGB("color")
+led_property = PropertyRGB("color", settable=True)
 
 # append the objects to the device's attributes
 led_node.properties.append(led_property)

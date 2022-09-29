@@ -4,11 +4,11 @@
 
 repos:
   - repo: https://github.com/python/black
-    rev: 22.3.0
+    rev: 22.8.0
     hooks:
       - id: black
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.2.0
+    rev: v4.3.0
     hooks:
       - id: check-yaml
       - id: end-of-file-fixer
@@ -34,6 +34,14 @@ repos:
         name: pylint (test code)
         description: Run pylint rules on "tests/*.py" files
         types: [python]
+        additional_dependencies: [pytest]
         files: "^tests/"
         args:
-          - --disable=missing-docstring,consider-using-f-string,duplicate-code
+          - --disable=import-error,invalid-name
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v0.981
+    hooks:
+      - id: mypy
+        name: mypy (library code)
+        exclude: "^(docs/|examples/|tests/|setup.py$)"
+        types: [python]

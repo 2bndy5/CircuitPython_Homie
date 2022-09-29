@@ -1,0 +1,197 @@
+{
+  "publish": [
+    {
+      "topic": "homie/test-device/$homie",
+      "message": "4.0.0",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/$name",
+      "message": "shim test device",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/$extensions",
+      "message": "null.dummy:none",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/$implementation",
+      "message": "circuitpython on Windows",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/$nodes",
+      "message": "mood,heater,alarm",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/$fw/name",
+      "message": "circuitpython-homie",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/$fw/version",
+      "message": "0.0.0+auto.0",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/mood/$name",
+      "message": "mood",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/mood/$type",
+      "message": "mood descriptive color",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/mood/$properties",
+      "message": "color",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/mood/color/$datatype",
+      "message": "color",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/mood/color/$format",
+      "message": "rgb",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/mood/color/$name",
+      "message": "color",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/mood/color",
+      "message": "0,0,0",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/heater/$name",
+      "message": "heater",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/heater/$type",
+      "message": "A space heater",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/heater/$properties",
+      "message": "switch",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/heater/switch/$datatype",
+      "message": "boolean",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/heater/switch/$name",
+      "message": "switch",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/heater/switch/$settable",
+      "message": "true",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/heater/switch",
+      "message": "false",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/alarm/$name",
+      "message": "alarm",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/alarm/$type",
+      "message": "buzzer",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/alarm/$properties",
+      "message": "buzzer",
+      "qos": 1,
+      "retain": true
+    },
+    {
+      "topic": "homie/test-device/alarm/buzzer/$datatype",
+      "message": "boolean",
+      "qos": 1,
+      "retain": false
+    },
+    {
+      "topic": "homie/test-device/alarm/buzzer/$name",
+      "message": "buzzer",
+      "qos": 1,
+      "retain": false
+    },
+    {
+      "topic": "homie/test-device/alarm/buzzer/$retained",
+      "message": "false",
+      "qos": 1,
+      "retain": false
+    },
+    {
+      "topic": "homie/test-device/alarm/buzzer",
+      "message": "false",
+      "qos": 1,
+      "retain": false
+    },
+    {
+      "topic": "homie/test-device/$state",
+      "message": "ready",
+      "qos": 1,
+      "retain": true
+    }
+  ],
+  "subscribe": [
+    {
+      "topic": "homie/test-device/heater/switch/set",
+      "qos": 1
+    },
+    {
+      "topic": "homie/$broadcast/#",
+      "qos": 1
+    }
+  ],
+  "will-n-testament": {
+    "topic": "homie/test-device/$state",
+    "message": "lost",
+    "qos": 0
+  },
+  "callback-registry": {
+    "topic": "homie/test-device/heater/switch/set",
+    "method": "flip_switch"
+  }
+}

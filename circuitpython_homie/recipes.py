@@ -7,16 +7,17 @@ node properties.
     :attr:`~circuitpython_homie.HomieProperty.callback` attribute.
 
 .. |param_mutable| replace:: (can be overridden with a keyword argument)
-.. |param_immutable| replace:: (cannot be overridden)
+.. |param_immutable| replace:: (shall not be overridden)
 .. |param_intro| replace:: The parameters here follow the `HomieProperty` constructor
     signature, but with a few exceptions:
 .. _ISO 8601: https://en.wikipedia.org/wiki/ISO_8601
+.. _ISO 8601 Duration: https://en.wikipedia.org/wiki/ISO_8601#Durations
 """
 import time
 
 try:
     from typing import Tuple, List, Union
-except ImportError:
+except ImportError:  # pragma: no cover
     pass  # do not type check on CircuitPython firmware
 
 from . import HomieProperty
@@ -30,7 +31,6 @@ class _PropertyColor(HomieProperty):
             "color",
             property_id=property_id,
             init_value=extra_attributes.pop("init_value", "0,0,0"),
-            settable=extra_attributes.pop("settable", True),
             **extra_attributes,
         )
 
@@ -39,16 +39,17 @@ class _PropertyColor(HomieProperty):
 
         :param color: The color as a string in which the elements are delimited by
             commas (``,``).
-        :throws: An `AssertionError` is raised when the given color string is malformed.
+        :throws: An `AssertionError` is raised when the given color string is malformed
+            or the color's components are out of bounds.
         :returns: A 3 `tuple` consisting of the color's 3 components.
         """
         elements = color.split(",")
-        assert len(elements) == 3, "expected 3 color elements, got {}".format(
+        assert len(elements) == 3, "expected 3 color components, got {}".format(
             len(elements)
         )
         for elem in elements:
             assert elem.isdigit()
-        return tuple(int(x) for x in elements)
+        return (int(elements[0]), int(elements[1]), int(elements[2]))
 
     def set(self, value: str) -> Tuple[int, int, int]:
         return self.validate(super().set(value))
@@ -60,9 +61,9 @@ class PropertyRGB(_PropertyColor):
     |param_intro|
 
     - ``settable`` attribute is set to `True` |param_mutable|
-    - ``init_value`` is set to black ``"0,0,0"`` |param_mutable|
-    - ``datatype`` attribute is set to ``"color"`` |param_immutable|
-    - ``format`` attribute is set to ``"rgb"`` |param_immutable|
+    - ``init_value`` is set to black :python:`"0,0,0"` |param_mutable|
+    - `datatype` attribute is set to :python:`"color"` |param_immutable|
+    - ``format`` attribute is set to :python:`"rgb"` |param_immutable|
     """
 
     def __init__(self, name: str, property_id: str = None, **extra_attributes):
@@ -86,10 +87,9 @@ class PropertyHSV(_PropertyColor):
 
     |param_intro|
 
-    - ``settable`` attribute is set to `True` |param_mutable|
-    - ``init_value`` is set to black ``"0,0,0"`` |param_mutable|
-    - ``datatype`` attribute is set to ``"color"`` |param_immutable|
-    - ``format`` attribute is set to ``"hsv"`` |param_immutable|
+    - ``init_value`` is set to black :python:`"0,0,0"` |param_mutable|
+    - `datatype` attribute is set to :python:`"color"` |param_immutable|
+    - ``format`` attribute is set to :python:`"hsv"` |param_immutable|
     """
 
     def __init__(self, name: str, property_id: str = None, **extra_attributes):
@@ -110,67 +110,13 @@ class PropertyHSV(_PropertyColor):
         return elements
 
 
-class PropertyPercent(HomieProperty):
-    """A property that represents a percentage.
-
-    The parameters here follow the `HomieProperty` constructor signature, but with
-    a few exceptions:
-
-    - ``unit`` attribute is set to ``"%"`` |param_immutable|
-    - ``datatype`` attribute is constrained to ``"integer"`` or  its default
-      ``"float"`` values |param_mutable|
-    - ``format`` attribute is set to ``"0:100"``, which describes a range from 0 to
-      100, but are not limited to this range |param_mutable|
-    - ``init_value`` defaults to ``0`` because percentage type payloads cannot be empty
-      strings |param_mutable|
-    """
-
-    def __init__(
-        self,
-        name: str,
-        datatype: str = "float",
-        property_id: str = None,
-        init_value=0,
-        **extra_attributes
-    ):
-        assert datatype in ("integer", "float")
-        super().__init__(
-            name,
-            datatype,
-            property_id,
-            init_value,
-            format=extra_attributes.pop("format", "0:100"),
-            **extra_attributes,
-        )
-
-    def validate(self, value: Union[int, float]) -> Union[int, float]:
-        """Make assertions that a given value is in the ``format`` range.
-
-        :param value: The value to validate.
-        :throws: An `AssertionError` is raised when the given ``value`` is malformed.
-        :returns: The validated value (as specified by the ``value`` parameter).
-        """
-        fmt = getattr(self, "format").split(":")  # type: List[str]
-        assert len(fmt) == 2, "expected `<min>:<max>` form, got {}.".format(value)
-        low, high = tuple(int(x) for x in fmt)
-        if self.datatype == "float":
-            low, high = tuple(float(x) for x in fmt)
-        assert low <= value <= high, "{} is not in range of [{}, {}]".format(
-            value, low, high
-        )
-        return value
-
-    def set(self, value: Union[int, float]) -> Union[int, float]:
-        return self.validate(super().set(value))
-
-
 class PropertyDateTime(HomieProperty):
     """A property that represents a data and time in `ISO 8601`_ format.
 
     |param_intro|
 
-    - ``datatype`` attribute is set to ``"datetime"`` |param_immutable|
-    - ``init_value`` is set to ``"2000-01-01T00:00:00"`` |param_mutable|
+    - `datatype` attribute is set to :python:`"datetime"` |param_immutable|
+    - ``init_value`` is set to :python:`"2000-01-01T00:00:00"` |param_mutable|
 
     .. hint::
         Validation of the payload format can be done using the `datetime` library
@@ -218,6 +164,75 @@ class PropertyDateTime(HomieProperty):
         """
         if isinstance(value, time.struct_time):
             return super().set(self.convert(value))
+        assert value, "a payload representing time cannot be an empty string."
+        return super().set(value)
+
+
+class PropertyDuration(HomieProperty):
+    """A property that represents a duration of time in `ISO 8601 Duration`_ format.
+
+    |param_intro|
+
+    - `datatype` attribute is set to :python:`"duration"` |param_immutable|
+    - ``init_value`` is set to :python:`"PT0S"` |param_mutable|
+
+    .. hint::
+        Validation of the payload format can be done using the `datetime` library
+        or the `adafruit_datetime` library.
+    """
+
+    def __init__(
+        self, name: str, property_id: str = None, init_value="PT0S", **extra_attributes
+    ):
+        extra_attributes.pop("datatype", None)
+        super().__init__(name, "duration", property_id, init_value, **extra_attributes)
+
+    @staticmethod
+    def convert(value: Union[int, float]) -> str:
+        """Takes a a number of seconds and returns a `str` in compliance
+        with `ISO 8601 Duration`_ standards.
+
+        .. note:: For minimality, this function will only convert a number of seconds
+            into units of hours, minutes, and seconds.
+
+        :param value: The number of seconds that describe a duration. If a `float`
+            object is passed, then the fractional seconds are truncated.
+        :returns: A `ISO 8601 Duration`_ compliant formatted string in the form
+            ``PTnHnMnS``.
+
+            Only  units with a non-zero value are represented. For instance, a value of
+            :python:`59` will return :python:`"PT59S"` (representing 59 seconds), and a
+            value of :python:`3609` will return :python:`"PT1H9S"` (representing 1 hour
+            and 9 seconds).
+        """
+        if isinstance(value, float):
+            value = int(value)
+        second = value % 60
+        minute = int((value % 3600) / 60)
+        hour = int(value / 3600)
+        time_duration = "PT"
+        if hour:
+            time_duration += "{}H".format(hour)
+        if minute:
+            time_duration += "{}M".format(minute)
+        if second or (not hour and not minute):
+            time_duration += "{}S".format(second)
+        return time_duration
+
+    def set(self, value: Union[str, int]) -> str:
+        """Set the property's value.
+
+        :param value: This parameter can be:
+
+            - A `str` in `ISO 8601`_ format. To validate the format of this string, use
+              the `datetime` library or the `adafruit_datetime` library.
+            - An `int` number of seconds which will be converted to `ISO 8601`_
+              duration format (via `convert()`).
+        :returns: The `str` form of the given value.
+        """
+        if isinstance(value, (int, float)):
+            return super().set(self.convert(value))
+        assert value, "a payload representing time cannot be an empty string."
         return super().set(value)
 
 
@@ -226,30 +241,23 @@ class PropertyBool(HomieProperty):
 
     |param_intro|
 
-    - ``datatype`` attribute is set to ``"boolean"`` |param_immutable|
-    - ``settable`` attribute is set to `True` |param_mutable|
-    - ``init_value`` is set to ``"false"`` |param_mutable|
+    - `datatype` attribute is set to :python:`"boolean"` |param_immutable|
+    - ``init_value`` is set to :python:`"false"` |param_mutable|
     """
 
     def __init__(
         self, name: str, property_id: str = None, init_value="false", **extra_attributes
     ):
         extra_attributes.pop("datatype", None)
-        super().__init__(
-            name,
-            "boolean",
-            property_id,
-            init_value,
-            settable=extra_attributes.pop("settable", True),
-            **extra_attributes,
-        )
+        super().__init__(name, "boolean", property_id, init_value, **extra_attributes)
 
     @staticmethod
     def validate(value: Union[str, bool]) -> bool:
         """Validates a `str` that describes a boolean.
 
         :param value: The boolean's description. According to the Homie specifications,
-            this string value can only be ``"true`` or ``"false"`` (case-sensitive).
+            this string value can only be :python:`"true` or :python:`"false"`
+            (case-sensitive).
 
             This function will convert the given `str` to lowercase form. If a `bool`
             is passed, then this function simply returns it.
@@ -270,3 +278,160 @@ class PropertyBool(HomieProperty):
         actual_value = self.validate(value)
         super().set("true" if actual_value else "false")
         return actual_value
+
+
+class _PropertyNumber(HomieProperty):
+    def __init__(
+        self,
+        name: str,
+        datatype: str,
+        property_id: str = None,
+        init_value=0,
+        **extra_attributes
+    ):
+        assert datatype in ("integer", "float")
+        super().__init__(name, datatype, property_id, init_value, **extra_attributes)
+
+    def validate(self, value: Union[str, int, float]) -> Union[int, float]:
+        """Make assertions that a given value is in the ``format`` range.
+
+        :param value: The value to validate. If this value is a `str`, then it is
+            converted to an `int` or `float` according to the `datatype` attribute.
+        :throws: An `AssertionError` is raised when the given ``value`` is malformed.
+        :returns: The validated value (as specified by the ``value`` parameter).
+        """
+        is_float = self.datatype == "float"
+        if isinstance(value, str):
+            value = int(value) if not is_float else float(value)
+        if hasattr(self, "format"):
+            fmt = getattr(self, "format").split(":")  # type: List[str]
+            assert len(fmt) == 2, "expected `<min>:<max>` form, got {}.".format(value)
+            low = int(fmt[0]) if not is_float else float(fmt[0])
+            high = int(fmt[1]) if not is_float else float(fmt[1])
+            if low > high:
+                low, high = (high, low)
+            assert low <= value <= high, "{} is not in range of [{}, {}]".format(
+                value, low, high
+            )
+        return value
+
+    def set(self, value: Union[str, int, float]) -> Union[int, float]:
+        return super().set(self.validate(value))
+
+
+class PropertyPercent(_PropertyNumber):
+    """A property that represents a percentage.
+
+    The parameters here follow the `HomieProperty` constructor signature, but with
+    a few exceptions:
+
+    - ``unit`` attribute is set to :python:`"%"` |param_immutable|
+    - `datatype` attribute is constrained to :python:`"integer"` or its default
+      :python:`"float"` values |param_mutable|
+    - ``format`` attribute is set to :python:`"0:100"`, which describes an inclusive
+      range from 0 to 100, but it is not have to be this range |param_mutable|
+    - ``init_value`` defaults to :python:`0` because percentage type payloads cannot be
+      empty rings |param_mutable|
+    """
+
+    def __init__(
+        self,
+        name: str,
+        datatype: str = "float",
+        property_id: str = None,
+        init_value=0,
+        **extra_attributes
+    ):
+        extra_attributes.pop("unit", None)
+        super().__init__(
+            name,
+            datatype,
+            property_id,
+            init_value,
+            format=extra_attributes.pop("format", "0:100"),
+            unit="%",
+            **extra_attributes,
+        )
+
+
+class PropertyInt(_PropertyNumber):
+    """A property to represent an integer.
+
+    |param_intro|
+
+    - `datatype` attribute is set to :python:`"integer"` |param_immutable|
+    - ``init_value`` is set to :python:`0` |param_mutable|
+    - ``format`` attribute can optionally be used to define the constraining
+      range. By default, the ``format`` attribute is unspecified |param_mutable|.
+    """
+
+    def __init__(
+        self, name: str, property_id: str = None, init_value=0, **extra_attributes
+    ):
+        extra_attributes.pop("datatype", None)
+        super().__init__(name, "integer", property_id, init_value, **extra_attributes)
+
+
+class PropertyFloat(_PropertyNumber):
+    """A property to represent an float.
+
+    |param_intro|
+
+    - `datatype` attribute is set to :python:`"float"` |param_immutable|
+    - ``init_value`` is set to :python:`0` |param_mutable|
+    - ``format`` attribute can optionally be used to define the constraining
+      range. By default, the ``format`` attribute is unspecified |param_mutable|.
+    """
+
+    def __init__(
+        self, name: str, property_id: str = None, init_value=0, **extra_attributes
+    ):
+        extra_attributes.pop("datatype", None)
+        super().__init__(name, "float", property_id, init_value, **extra_attributes)
+
+
+class PropertyEnum(HomieProperty):
+    """A property that represent an option amongst a defined list of valid options.
+
+    |param_intro|
+    - `datatype` attribute is set to :python:`"enum"` |param_immutable|
+    - ``format`` attribute is required and must be a `list` or `tuple`.
+    - ``init_value`` will be the first item in ``format`` |param_mutable|
+    """
+
+    def __init__(
+        self,
+        name: str,
+        format: Union[list, tuple],  # pylint: disable=redefined-builtin
+        property_id: str = None,
+        init_value="",
+        **extra_attributes
+    ):
+        extra_attributes.pop("datatype", None)
+        if isinstance(format, (list, tuple)):
+            assert format, "`format` cannot be an empty sequence."
+            if not init_value:
+                init_value = format[0]
+            else:
+                assert init_value in format, "init_value is not in {}".format(format)
+        else:
+            raise ValueError("`format` shall be a list or tuple of values.")
+        super().__init__(
+            name, "enum", property_id, init_value, format=format, **extra_attributes
+        )
+
+    def validate(self, value: Union[str, int, float]):
+        """Ensure that the given ``value`` is part of the defined ``format`` attribute.
+
+        :param value: The specified value. This `type` should correspond to the `type`
+            used in the defined ``format``.
+        :returns: The valid value.
+        :throws:
+            - An `AssertionError` if the given value is not in the defined ``format``.
+        """
+        fmt = getattr(self, "format")  # type: Union[List, tuple]
+        assert value in fmt, "{} is not in {}".format(value, fmt)
+        return value
+
+    def set(self, value):
+        return self.validate(super().set(value))

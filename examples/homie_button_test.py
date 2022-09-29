@@ -56,7 +56,7 @@ button_value = button.value  # for edge detection
 # create the objects that describe our device
 device = HomieDevice(mqtt_client, "my device name", "lib-button-id")
 switch_node = HomieNode("light", "Typical Lamp")
-switch_property = PropertyBool("switch")
+switch_property = PropertyBool("switch", settable=True)
 
 # append the objects to the device's attributes
 switch_node.properties.append(switch_property)

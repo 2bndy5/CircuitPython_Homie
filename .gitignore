@@ -44,6 +44,17 @@ _build
 .env
 .venv
 
+# coverage info
+.coverage
+htmlcov/
+coverage.xml
+
+# mypy cache
+.mypy_cache/
+
+# pytest cache
+.pytest_cache/
+
 # MacOS-specific files
 *.DS_Store
 

@@ -41,16 +41,10 @@ mqtt_client.on_connect = on_connected
 light_sensor_pin = board.IO4  # change this accordingly
 light_sensor = analogio.AnalogIn(light_sensor_pin)
 
-
-def read_light_sensor() -> float:
-    """Convert the analog voltage reading into a percentage."""
-    return light_sensor.value / 65535 * 100
-
-
 # create the objects that describe our device
 device = HomieDevice(mqtt_client, "my device name", "lib-light-sensor-test-id")
 ambient_light_node = HomieNode("ambient-light", "Light Sensor")
-ambient_light_property = PropertyPercent("brightness", init_value=read_light_sensor())
+ambient_light_property = PropertyPercent("brightness")
 
 # append the objects to the device's attributes
 ambient_light_node.properties.append(ambient_light_property)
@@ -78,8 +72,10 @@ try:
             if now - refresh_last > 0.5:  # refresh every 0.5 seconds
                 refresh_last = now
                 assert mqtt_client.is_connected()
-                value = device.set_property(ambient_light_property, read_light_sensor())
-                print("\rlight sensor value:", value, end="\r")
+                value = device.set_property(
+                    ambient_light_property, light_sensor.value / 65535 * 100
+                )
+                print("light sensor value:", value, end="\r")
         except MMQTTException:
             print("\n!!! Connection with broker is lost.")
 except KeyboardInterrupt:
