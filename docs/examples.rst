@@ -1,6 +1,9 @@
 Examples
 ========
 
+Prerequisites
+-------------
+
 All of these examples require a separate user-defined module named ``secrets.py``.
 In this secrets module should be 2 `dict`\ s:
 
@@ -24,6 +27,15 @@ In this secrets module should be 2 `dict`\ s:
         broker="openhabian",  # the broker's hostname or IP address
         port=1883,  # the broker's port
     )
+
+Dependencies
+************
+
+Some examples use other third-party libraries (which are available in Adafruit's CircuitPython
+Library bundle). These libraries are listed in the examples/requirements.txt file for easy install.
+
+.. literalinclude:: ../examples/requirements.txt
+    :caption: examples/requirements.txt
 
 Simple test
 ------------

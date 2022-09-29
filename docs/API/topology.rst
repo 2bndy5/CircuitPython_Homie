@@ -1,6 +1,8 @@
 Topology
 ========
 
+.. automodule:: circuitpython_homie
+
 This library's data structures follows the
 `Homie specification's topology <https://homieiot.github.io/specification/#topology>`_.
 Because this implementation is written in pure python, the attributes of a Homie

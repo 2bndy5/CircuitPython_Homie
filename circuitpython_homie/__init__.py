@@ -2,8 +2,11 @@
 #
 # SPDX-License-Identifier: MIT
 """
-This module holds the Homie implementation for a device.
-See the nodes.py and properties.py for other Homie implementations.
+The :mod:`circuitpython_homie` module holds the Homie implementations for a
+:class:`device <HomieDevice>`, :class:`node <HomieNode>`, and
+:class:`property <HomieProperty>`. See the :mod:`circuitpython_homie.recipes` module
+for specialized properties that implement certain datatypes defined by the
+`Homie Specifications <https://homieiot.github.io/specification#payload>`_.
 """
 try:
     from os import uname  # type: ignore
@@ -118,7 +121,7 @@ class HomieProperty:
         datatype = datatype.lower()
         if datatype not in PAYLOAD_TYPES:
             raise ValueError("{} datatype is not in {}".format(datatype, PAYLOAD_TYPES))
-        #: The property's :homie-attr:`datatype` attribute
+        #: The property's :homie-attr:`datatype` attribute.
         self.datatype = datatype
         #: The property's value.
         self._value = init_value
@@ -207,16 +210,31 @@ class HomieProperty:
         Conventionally, this will require echoing the data back to the broker as
         confirmation.
 
+        .. seealso::
+            Use `HomieDevice.set_property()` to echo back a confirmation to the MQTT
+            broker.
         .. code-block:: python
 
-            my_prop = HomieProperty("signage", settable=True)
+            prop1 = HomieProperty("signage", settable=True)
 
             def new_signage(client: MQTT, topic, :str, message: str):
-                print("received:", message)
-                my_homie_device.set_property(my_prop, message)
-                print("confirmation sent to broker")
+                # let `my_device` be the instantiated HomieDevice object
+                my_device.set_property(prop1, message)  # confirm with broker
+                # Optionally do something with the new value
+                print("received:", prop1.value)
 
-            my_prop.callback = new_signage
+            prop1.callback = new_signage
+        .. details:: Using a lambda
+            :class: info
+
+            CircuitPython also supports `lambda` objects.
+
+            .. code-block:: python
+
+                prop2 = HomieProperty("signage", settable=True)
+                prop2.callback = lambda *args: my_device.set_property(prop2, args[2])
+
+            This assumes that the property's `value` will be used elsewhere.
         """
         if not self.is_settable():
             return None

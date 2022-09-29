@@ -1,5 +1,5 @@
-"""The ``recipes`` module holds any suggested recipes for easily implementing common
-node properties.
+"""The :mod:`circuitpython_homie.recipes` module holds any suggested recipes for easily
+implementing common node properties.
 
 .. important::
     Callback methods are not templated for these properties. Users are advised to

@@ -25,6 +25,11 @@
 
     tutorials/openhab
 
+.. toctree::
+    :hidden:
+
+    contributing
+
 .. include:: ../README.rst
 
 Indices and tables
