@@ -7,9 +7,11 @@ name: Release Actions
 on:
   release:
     types: [published]
+  workflow_dispatch:
 
 jobs:
   upload-release-assets:
+    if: github.event_name != 'workflow_dispatch' && github.repository == '2bndy5/CircuitPython_Homie'
     runs-on: ubuntu-latest
     steps:
     - name: Translate Repo Name For Build Tools filename_prefix
