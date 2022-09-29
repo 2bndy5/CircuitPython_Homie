@@ -20,7 +20,7 @@
     },
     {
       "topic": "homie/test-device/$implementation",
-      "message": "circuitpython on Windows",
+      "message": "shim test for CircuitPython",
       "qos": 1,
       "retain": true
     },
@@ -38,7 +38,7 @@
     },
     {
       "topic": "homie/test-device/$fw/version",
-      "message": "0.0.0+auto.0",
+      "message": "dev",
       "qos": 1,
       "retain": true
     },

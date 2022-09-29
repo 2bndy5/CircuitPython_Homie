@@ -14,7 +14,12 @@ def test_device(
     """Initialize a HomieDevice object and export the
     shim client's logs for comparison."""
     monkeypatch.chdir(str(tmp_path))
-    created_shim_dev.begin()
+
+    # make test results agnostic to platform and lib version
+    created_shim_dev.implementation = "shim test for CircuitPython"
+    created_shim_dev.fw["version"] = "dev"
+
+    created_shim_dev.begin()  # create log of topics
 
     # ensure mandatory topics are published
     log_json = "fake-mqtt-log.json"

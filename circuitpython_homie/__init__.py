@@ -286,7 +286,7 @@ class HomieDevice:
     """
 
     #: The :homie-attr:`implementation` attribute is global to all instantiated devices.
-    implementation = "circuitpython on " + uname()[0]
+    implementation = "CircuitPython on " + uname()[0]
 
     #: The base topic used for all Homie devices.
     base_topic = "homie"
