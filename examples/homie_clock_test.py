@@ -91,15 +91,15 @@ device.begin()
 # a forever loop
 try:
     refresh_last = time.time()
+    time_fmt = clock_property.convert(time.localtime())
     while True:
         try:
             now = time.time()
-            time_fmt = clock_property.convert(time.localtime())
             print(time_fmt, end="\r")
             if now - refresh_last >= 1:  # refresh every 1 second
                 refresh_last = now
                 assert mqtt_client.is_connected()
-                device.set_property(clock_property, time_fmt)
+                time_fmt = device.set_property(clock_property, time.localtime())
         except MMQTTException:
             print("\n!!! Connection with broker is lost.")
 except KeyboardInterrupt:

@@ -50,6 +50,8 @@ led_property = PropertyRGB("color", settable=True)
 led_node.properties.append(led_property)
 device.nodes.append(led_node)
 
+pixel.fill(led_property.value)  # color the LED with the property's value
+
 # add a callback to remotely control the LED
 def change_color(client: MQTT, topic: str, message: str):
     """Change the color of the LED based on the message from the broker."""
@@ -80,7 +82,6 @@ mqtt_client.on_disconnect = on_disconnected
 
 # connect to the broker and publish/subscribe the device's topics
 device.begin()
-pixel.fill(led_property.validate(led_property()))
 
 # a forever loop
 try:

@@ -31,7 +31,7 @@ Simple test
 Ensure your device works with this simple test.
 
 This example uses the `PropertyRGB` class to represent the on-board LED (Neopixel or Dotstar).
-The color is controlled using `openHAB <https://www.openhab.org/>`_.
+The color is controlled using OpenHAB_.
 
 .. literalinclude:: ../examples/homie_simpletest.py
     :caption: examples/homie_simpletest.py

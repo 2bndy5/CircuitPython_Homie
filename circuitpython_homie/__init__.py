@@ -12,7 +12,7 @@ except ImportError:
 
 try:
     from typing import List, Dict, Any
-except ImportError:  # pragma: no cover
+except ImportError:
     pass  # don't type check on CircuitPython firmware
 
 import re
@@ -132,15 +132,22 @@ class HomieProperty:
             setattr(self, attr_name, attr_val)
         self._callback = None
 
-    def __call__(self):
-        """The current value of an instantiated property can be fetched by calling the
-        object directly.
+    @property
+    def value(self):
+        """The current value of the property.
 
-        .. code-block:: python
+        .. admonition:: Read Only
+            :class: missing
 
-            >>> led_property = HomieProperty("color", "color", init_value="0,255,0")
-            >>> print(led_property())
-            0,255,0
+            This function will not update the value on the MQTT broker.
+            Instead use `HomieDevice.set_property()` to do that.
+
+        :returns: A usable object as a result of validation. This class has no
+            implemented validation method because it is meant to be a derivative's
+            base class. Therefore, this function simply returns the specified
+            value.
+
+            .. seealso:: The :doc:`recipes` have validators implemented accordingly.
         """
         return self._value
 
@@ -151,22 +158,9 @@ class HomieProperty:
     def __str__(self) -> str:
         return self.property_id
 
-    def set(self, value):
+    def _set(self, value):
         """A helper function to change the property's value. This is called by
-        `HomieDevice.set_property()`.
-
-        .. important::
-            This function will not update the value on the MQTT broker.
-            Instead use `HomieDevice.set_property()` to do that.
-
-        :param value: The new value to be used as the property's value.
-        :returns: A usable object as a result of validation. This class has no
-            implemented validation method because it is meant to be a derivative's
-            base class. Therefore, this function simply returns the specified
-            ``value`` parameter.
-
-            .. seealso:: The :doc:`helpers` have validators implemented accordingly.
-        """
+        `HomieDevice.set_property()`."""
         self._value = value
         return value
 
@@ -312,10 +306,9 @@ class HomieDevice:
         device_id = validate_id(device_id)
         self.topic = "/".join([self.base_topic, device_id])
         try:
-            if self.client.is_connected():
-                self.client.disconnect()
-        except MMQTTException:
-            pass  # this exception meant the client is disconnected.
+            self.client.disconnect()
+        except MMQTTException:  # pragma: no cover
+            pass  # this exception meant the client was disconnected.
         self.client.will_set(self.topic + "/$state", "lost")
         self.client.connect(keep_alive=5)
 
@@ -355,7 +348,7 @@ class HomieDevice:
                     value = getattr(prop, attr)
                     if (
                         attr.startswith("_")
-                        or attr in ("callback", "property_id")
+                        or attr in ("callback", "property_id", "value")
                         or callable(value)
                     ):
                         continue
@@ -365,7 +358,7 @@ class HomieDevice:
                 if prop.is_settable():
                     self.client.add_topic_callback(prop_topic + "/set", prop.callback)
                     self.client.subscribe(prop_topic + "/set", qos=1)
-                self._publish_topic(prop_topic, prop(), retain=retained)
+                self._publish_topic(prop_topic, prop.value, retain=retained)
         self._publish_topic(self.topic + "/$state", "ready")
         if self.enable_broadcast:
             self.client.subscribe(self.base_topic + "/$broadcast/#", qos=1)
@@ -386,27 +379,26 @@ class HomieDevice:
         """Change a specified property's value and publish it to the MQTT broker.
 
         :param prop: the instance object representing the device node's property.
+        :param value: The new value for the property. The data type passed here will
+            depend on type of `HomieProperty` (specified by the ``prop`` parameter) for
+            which it is being applied.
+
+            .. seealso:: The :doc:`recipes` have validators implemented accordingly.
         :param multi_node: Set this to `True` if the property is associated with
-            multiple device nodes. By default, only the first node found in
+            multiple device `nodes`. By default, only the first node found in
             association is updated on the MQTT broker.
         :throws: If the property is not associated with one of the device's `nodes`,
             then a `ValueError` exception is raised.
         """
-        actual_val = prop.set(value)
-        pub_val = prop() if isinstance(prop(), str) else str(prop())
+        pub_val = prop._set(value)  # pylint: disable=protected-access
         found = False
         for node in self.nodes:
             if prop in node.properties:
-                topic = "/".join([self.topic, node.node_id, prop.property_id])
-                self.client.publish(topic, pub_val)
+                topic = "/".join([self.topic, node.node_id, str(prop)])
+                self._publish_topic(topic, pub_val, prop.is_retained())
                 found = True
-                print("found property", prop)
                 if not multi_node:
                     break
         if not found:
-            raise ValueError(
-                "Could not find the node associated with the given property: {}".format(
-                    prop
-                )
-            )
-        return actual_val
+            raise ValueError("Could not find a node associated with {}".format(prop))
+        return pub_val

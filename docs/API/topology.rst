@@ -51,8 +51,8 @@ Simple Example
 --------------
 
 Let's say you have a board equipped with an ESP32-Sx chip, and you want to broadcast temperature
-and humidity data from a DHT sensor to your MQTT broker for use in OpenHab. Just for fun, we'll
-let OpenHab control your on-board RGB LED too. Structurally, this would be organized like so:
+and humidity data from a DHT sensor to your MQTT broker for use in OpenHAB_. Just for fun, we'll
+let OpenHAB_ control your on-board RGB LED too. Structurally, this would be organized like so:
 
 .. md-tab-set::
 
@@ -122,6 +122,18 @@ let OpenHab control your on-board RGB LED too. Structurally, this would be organ
             led_node.properties.append(led_color_property)
 
     .. md-tab-item:: MQTT Topical Tree
+        :class: topic-list
+
+        .. details:: Legend
+            :class: faq
+
+            - ``homie`` denotes the default base topic for all Homie implementations.
+              This can be changed via the `HomieDevice.base_topic` attribute.
+            - :homie-dev:`topic` denotes a base topic for a device, node, or property.
+            - :homie-attr:`topic` denotes a base topic for attributes that belong to a
+              device, node, or property.
+            - :homie-val:`value` denotes a topic's message (or value). Notice that nodes'
+              base topic do not have a corresponding message.
 
         - ``homie``
 

@@ -16,7 +16,7 @@ node properties.
 import time
 
 try:
-    from typing import Tuple, List, Union
+    from typing import Sequence, List, Union
 except ImportError:  # pragma: no cover
     pass  # do not type check on CircuitPython firmware
 
@@ -30,11 +30,11 @@ class _PropertyColor(HomieProperty):
             name,
             "color",
             property_id=property_id,
-            init_value=extra_attributes.pop("init_value", "0,0,0"),
+            init_value=self.validate(extra_attributes.pop("init_value", "0,0,0")),
             **extra_attributes,
         )
 
-    def validate(self, color: str) -> Tuple[int, int, int]:
+    def validate(self, color: Union[str, Sequence[int]]) -> List[int]:
         """Translate a color string into a valid 3-tuple of integers.
 
         :param color: The color as a string in which the elements are delimited by
@@ -43,16 +43,17 @@ class _PropertyColor(HomieProperty):
             or the color's components are out of bounds.
         :returns: A 3 `tuple` consisting of the color's 3 components.
         """
-        elements = color.split(",")
+        if isinstance(color, str):
+            elements = [int(x) for x in color.split(",")]
+        else:
+            elements = list(color)
         assert len(elements) == 3, "expected 3 color components, got {}".format(
             len(elements)
         )
-        for elem in elements:
-            assert elem.isdigit()
-        return (int(elements[0]), int(elements[1]), int(elements[2]))
+        return elements
 
-    def set(self, value: str) -> Tuple[int, int, int]:
-        return self.validate(super().set(value))
+    def _set(self, value: Union[str, Sequence[int]]) -> List[int]:
+        return super()._set(self.validate(value))
 
 
 class PropertyRGB(_PropertyColor):
@@ -75,7 +76,7 @@ class PropertyRGB(_PropertyColor):
             **extra_attributes,
         )
 
-    def validate(self, color: str) -> Tuple[int, int, int]:
+    def validate(self, color: Union[str, Sequence[int]]) -> List[int]:
         elements = super().validate(color)
         for elem in elements:
             assert 0 <= elem <= 255, "{} is not in range [0, 255]".format(elem)
@@ -100,7 +101,7 @@ class PropertyHSV(_PropertyColor):
             **extra_attributes,
         )
 
-    def validate(self, color: str) -> Tuple[int, int, int]:
+    def validate(self, color: Union[str, Sequence[int]]) -> List[int]:
         elements = super().validate(color)
         for i, elem in enumerate(elements):
             if not i:
@@ -151,7 +152,7 @@ class PropertyDateTime(HomieProperty):
             value.tm_sec,
         )
 
-    def set(self, value: Union[str, time.struct_time]) -> str:
+    def _set(self, value: Union[str, time.struct_time]) -> str:
         """Set the property's value.
 
         :param value: This parameter can be:
@@ -163,9 +164,9 @@ class PropertyDateTime(HomieProperty):
         :returns: The `str` form of the given value.
         """
         if isinstance(value, time.struct_time):
-            return super().set(self.convert(value))
+            return super()._set(self.convert(value))
         assert value, "a payload representing time cannot be an empty string."
-        return super().set(value)
+        return super()._set(value)
 
 
 class PropertyDuration(HomieProperty):
@@ -219,7 +220,7 @@ class PropertyDuration(HomieProperty):
             time_duration += "{}S".format(second)
         return time_duration
 
-    def set(self, value: Union[str, int]) -> str:
+    def _set(self, value: Union[str, int]) -> str:
         """Set the property's value.
 
         :param value: This parameter can be:
@@ -231,9 +232,9 @@ class PropertyDuration(HomieProperty):
         :returns: The `str` form of the given value.
         """
         if isinstance(value, (int, float)):
-            return super().set(self.convert(value))
+            return super()._set(self.convert(value))
         assert value, "a payload representing time cannot be an empty string."
-        return super().set(value)
+        return super()._set(value)
 
 
 class PropertyBool(HomieProperty):
@@ -246,10 +247,12 @@ class PropertyBool(HomieProperty):
     """
 
     def __init__(
-        self, name: str, property_id: str = None, init_value="false", **extra_attributes
+        self, name: str, property_id: str = None, init_value=False, **extra_attributes
     ):
         extra_attributes.pop("datatype", None)
-        super().__init__(name, "boolean", property_id, init_value, **extra_attributes)
+        super().__init__(
+            name, "boolean", property_id, self.validate(init_value), **extra_attributes
+        )
 
     @staticmethod
     def validate(value: Union[str, bool]) -> bool:
@@ -274,10 +277,8 @@ class PropertyBool(HomieProperty):
         ), "{} is not a valid boolean description".format(value)
         return value == "true"
 
-    def set(self, value: Union[bool, str]) -> bool:
-        actual_value = self.validate(value)
-        super().set("true" if actual_value else "false")
-        return actual_value
+    def _set(self, value: Union[bool, str]) -> bool:
+        return super()._set(self.validate(value))
 
 
 class _PropertyNumber(HomieProperty):
@@ -290,7 +291,12 @@ class _PropertyNumber(HomieProperty):
         **extra_attributes
     ):
         assert datatype in ("integer", "float")
-        super().__init__(name, datatype, property_id, init_value, **extra_attributes)
+        self.datatype = datatype  # needs to be set for using validate()
+        if "format" in extra_attributes:
+            setattr(self, "format", extra_attributes["format"])
+        super().__init__(
+            name, datatype, property_id, self.validate(init_value), **extra_attributes
+        )
 
     def validate(self, value: Union[str, int, float]) -> Union[int, float]:
         """Make assertions that a given value is in the ``format`` range.
@@ -315,8 +321,8 @@ class _PropertyNumber(HomieProperty):
             )
         return value
 
-    def set(self, value: Union[str, int, float]) -> Union[int, float]:
-        return super().set(self.validate(value))
+    def _set(self, value: Union[str, int, float]) -> Union[int, float]:
+        return super()._set(self.validate(value))
 
 
 class PropertyPercent(_PropertyNumber):
@@ -378,13 +384,13 @@ class PropertyFloat(_PropertyNumber):
     |param_intro|
 
     - `datatype` attribute is set to :python:`"float"` |param_immutable|
-    - ``init_value`` is set to :python:`0` |param_mutable|
+    - ``init_value`` is set to :python:`0.0` |param_mutable|
     - ``format`` attribute can optionally be used to define the constraining
       range. By default, the ``format`` attribute is unspecified |param_mutable|.
     """
 
     def __init__(
-        self, name: str, property_id: str = None, init_value=0, **extra_attributes
+        self, name: str, property_id: str = None, init_value=0.0, **extra_attributes
     ):
         extra_attributes.pop("datatype", None)
         super().__init__(name, "float", property_id, init_value, **extra_attributes)
@@ -408,14 +414,13 @@ class PropertyEnum(HomieProperty):
         **extra_attributes
     ):
         extra_attributes.pop("datatype", None)
-        if isinstance(format, (list, tuple)):
-            assert format, "`format` cannot be an empty sequence."
-            if not init_value:
-                init_value = format[0]
-            else:
-                assert init_value in format, "init_value is not in {}".format(format)
-        else:
+        if not isinstance(format, (list, tuple)):
             raise ValueError("`format` shall be a list or tuple of values.")
+        assert format, "`format` cannot be an empty sequence."
+        if not init_value:
+            init_value = format[0]
+        else:
+            assert init_value in format, "init_value is not in {}".format(format)
         super().__init__(
             name, "enum", property_id, init_value, format=format, **extra_attributes
         )
@@ -433,5 +438,5 @@ class PropertyEnum(HomieProperty):
         assert value in fmt, "{} is not in {}".format(value, fmt)
         return value
 
-    def set(self, value):
-        return self.validate(super().set(value))
+    def _set(self, value):
+        return super()._set(self.validate(value))

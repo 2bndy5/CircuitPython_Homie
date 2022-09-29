@@ -26,7 +26,7 @@
     },
     {
       "topic": "homie/test-device/$nodes",
-      "message": "mood,heater,alarm",
+      "message": "mood,heater,thermostat",
       "qos": 1,
       "retain": true
     },
@@ -64,25 +64,31 @@
       "topic": "homie/test-device/mood/color/$datatype",
       "message": "color",
       "qos": 1,
-      "retain": true
+      "retain": false
     },
     {
       "topic": "homie/test-device/mood/color/$format",
       "message": "rgb",
       "qos": 1,
-      "retain": true
+      "retain": false
     },
     {
       "topic": "homie/test-device/mood/color/$name",
       "message": "color",
       "qos": 1,
-      "retain": true
+      "retain": false
+    },
+    {
+      "topic": "homie/test-device/mood/color/$retained",
+      "message": "false",
+      "qos": 1,
+      "retain": false
     },
     {
       "topic": "homie/test-device/mood/color",
       "message": "0,0,0",
       "qos": 1,
-      "retain": true
+      "retain": false
     },
     {
       "topic": "homie/test-device/heater/$name",
@@ -127,46 +133,40 @@
       "retain": true
     },
     {
-      "topic": "homie/test-device/alarm/$name",
-      "message": "alarm",
+      "topic": "homie/test-device/thermostat/$name",
+      "message": "thermostat",
       "qos": 1,
       "retain": true
     },
     {
-      "topic": "homie/test-device/alarm/$type",
-      "message": "buzzer",
+      "topic": "homie/test-device/thermostat/$type",
+      "message": "temperature sensor",
       "qos": 1,
       "retain": true
     },
     {
-      "topic": "homie/test-device/alarm/$properties",
-      "message": "buzzer",
+      "topic": "homie/test-device/thermostat/$properties",
+      "message": "temperature",
       "qos": 1,
       "retain": true
     },
     {
-      "topic": "homie/test-device/alarm/buzzer/$datatype",
-      "message": "boolean",
+      "topic": "homie/test-device/thermostat/temperature/$datatype",
+      "message": "integer",
       "qos": 1,
-      "retain": false
+      "retain": true
     },
     {
-      "topic": "homie/test-device/alarm/buzzer/$name",
-      "message": "buzzer",
+      "topic": "homie/test-device/thermostat/temperature/$name",
+      "message": "temperature",
       "qos": 1,
-      "retain": false
+      "retain": true
     },
     {
-      "topic": "homie/test-device/alarm/buzzer/$retained",
-      "message": "false",
+      "topic": "homie/test-device/thermostat/temperature",
+      "message": "0",
       "qos": 1,
-      "retain": false
-    },
-    {
-      "topic": "homie/test-device/alarm/buzzer",
-      "message": "false",
-      "qos": 1,
-      "retain": false
+      "retain": true
     },
     {
       "topic": "homie/test-device/$state",

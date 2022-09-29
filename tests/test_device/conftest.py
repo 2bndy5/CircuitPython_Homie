@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Dict, Any, Union, List, cast, Tuple, Callable
 import pytest
 from circuitpython_homie import HomieDevice, HomieNode
-from circuitpython_homie.recipes import PropertyBool, PropertyRGB
+from circuitpython_homie.recipes import PropertyBool, PropertyRGB, PropertyInt
 
 PAYLOAD_TYPE = Union[str, bytes, bytearray]
 
@@ -90,11 +90,11 @@ def created_shim_dev() -> HomieDevice:
 
     mood_node = HomieNode("mood", "mood descriptive color")
     heater_node = HomieNode("heater", "A space heater")
-    alarm_node = HomieNode("alarm", "buzzer")
+    thermostat_node = HomieNode("thermostat", "temperature sensor")
 
-    mood_prop = PropertyRGB("color")
+    thermostat_prop = PropertyInt("temperature")
     heater_prop = PropertyBool("switch", settable=True)
-    alarm_prop = PropertyBool("buzzer", retained=False)
+    mood_prop = PropertyRGB("color", retained=False)
 
     def flip_switch(*args: Tuple[ShimMQTT, str, str]):
         """called when broker flips the switch property's value."""
@@ -102,9 +102,9 @@ def created_shim_dev() -> HomieDevice:
 
     heater_prop.callback = flip_switch
 
-    dev.nodes.extend([mood_node, heater_node, alarm_node])
+    dev.nodes.extend([mood_node, heater_node, thermostat_node])
     mood_node.properties.append(mood_prop)
     heater_node.properties.append(heater_prop)
-    alarm_node.properties.append(alarm_prop)
+    thermostat_node.properties.append(thermostat_prop)
 
     return dev

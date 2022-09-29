@@ -3,3 +3,4 @@
 # SPDX-License-Identifier: Unlicense
 
 sphinx-immaterial
+sphinxcontrib-details-directive

@@ -68,6 +68,7 @@ def change_state(client: MQTT, topic: str, message: str):
     print("--> broker said switch_state is now", message)
     # echo confirmation back to broker
     switch_state = device.set_property(switch_property, message)
+    pixel.fill((0, 255, 0) if switch_state else (255, 0, 0))
     print("<-- switch state is now", switch_state)
 
 
@@ -100,9 +101,7 @@ try:
             # toggle the switch's state on button press
             if button_value != button.value and not button.value:
                 button_value = button.value
-                state = device.set_property(
-                    switch_property, not switch_property.validate(switch_property())
-                )
+                state = device.set_property(switch_property, not switch_property.value)
                 print("button was pressed", "<(!)>" if state else " (-) ")
                 pixel.fill((0, 255, 0) if state else (255, 0, 0))
             elif button.value and button_value != button.value:

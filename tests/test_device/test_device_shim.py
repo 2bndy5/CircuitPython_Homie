@@ -31,10 +31,10 @@ def test_device(
 
 def test_prop_setter(created_shim_dev: HomieDevice):
     """Test `HomieDevice.set_property()`"""
-    node = created_shim_dev.nodes[1]  # heater node
-    prop = node.properties[0]  # switch property (bool)
-    created_shim_dev.set_property(prop, True)
-    assert prop() == "true"
+    node = created_shim_dev.nodes[2]  # thermostat node
+    prop = node.properties[0]  # temperature property (int)
+    created_shim_dev.set_property(prop, 85)
+    assert prop.value == 85
 
 
 @pytest.mark.parametrize(

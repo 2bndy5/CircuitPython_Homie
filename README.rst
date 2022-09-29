@@ -8,12 +8,16 @@ Introduction
 .. image:: https://github.com/2bndy5/CircuitPython_Homie/workflows/Build%20CI/badge.svg
     :target: https://github.com/2bndy5/CircuitPython_Homie/actions
     :alt: Build Status
+.. image:: https://codecov.io/gh/2bndy5/CircuitPython_Homie/branch/main/graph/badge.svg?token=FOEW7PBQG8
+    :target: https://codecov.io/gh/2bndy5/CircuitPython_Homie
+    :alt: Test Code Coverage
 
 Homie specifications for MQTT implemented in CircuitPython
 
-.. image:: https://homieiot.github.io/img/works-with-homie.png
+.. image:: https://homieiot.github.io/img/works-with-homie.svg
     :alt: Works with MQTT Homie
     :target: https://homieiot.github.io/
+    :width: 50%
 
 Dependencies
 =============

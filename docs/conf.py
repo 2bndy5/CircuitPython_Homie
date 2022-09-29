@@ -18,6 +18,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
+    "sphinxcontrib.details.directive",
     "sphinx_immaterial",
     "sphinx_immaterial.graphviz",
 ]
@@ -181,6 +182,7 @@ rst_prolog = """
 .. role:: homie-node(code)
    :language: text
    :class: homie-node
+.. _OpenHAB: https://www.openhab.org/
 """
 
 master_doc = "index"

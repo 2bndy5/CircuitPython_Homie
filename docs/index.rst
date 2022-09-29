@@ -17,7 +17,13 @@
     API/device
     API/node
     API/property
-    API/helpers
+    API/recipes
+
+.. toctree::
+    :hidden:
+    :caption: Tutorials
+
+    tutorials/openhab
 
 .. include:: ../README.rst
 
