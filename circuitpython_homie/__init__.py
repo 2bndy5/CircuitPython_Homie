@@ -323,12 +323,6 @@ class HomieDevice:
 
         device_id = validate_id(device_id)
         self.topic = "/".join([self.base_topic, device_id])
-        try:
-            self.client.disconnect()
-        except MMQTTException:  # pragma: no cover
-            pass  # this exception meant the client was disconnected.
-        self.client.will_set(self.topic + "/$state", "lost")
-        self.client.connect(keep_alive=5)
 
     def _publish_topic(self, topic: str, value, retain: bool = True):
         """A helper to publish topics arbitrarily."""
@@ -345,9 +339,21 @@ class HomieDevice:
             pub_val = str(pub_val)
         self.client.publish(topic, pub_val, retain=retain, qos=1)
 
-    def begin(self):
-        """Register this Homie device with the MQTT broker."""
-        assert self.client.is_connected()
+    def begin(self, **mqtt_settings):
+        """Register this Homie device with the MQTT broker.
+
+        :param mqtt_settings: All keyword arguments are used as parameters that get
+            passed to :meth:`~adafruit_minimqtt.adafruit_minimqtt.MQTT.connect()`.
+        """
+        # set the will and testament (requires being disconnected first)
+        try:
+            if self.client.is_connected():
+                self.client.disconnect()
+        except MMQTTException:  # pragma: no cover
+            pass  # this exception meant the client was disconnected.
+        self.client.will_set(self.topic + "/$state", "lost")
+        self.client.connect(**mqtt_settings)
+
         # publish default/required attributes
         for attr in ("homie", "name", "extensions", "implementation", "nodes", "fw"):
             self._publish_topic(self.topic + "/$" + attr, getattr(self, attr))
@@ -377,9 +383,9 @@ class HomieDevice:
                     self.client.add_topic_callback(prop_topic + "/set", prop.callback)
                     self.client.subscribe(prop_topic + "/set", qos=1)
                 self._publish_topic(prop_topic, prop.value, retain=retained)
-        self._publish_topic(self.topic + "/$state", "ready")
         if self.enable_broadcast:
             self.client.subscribe(self.base_topic + "/$broadcast/#", qos=1)
+        self._publish_topic(self.topic + "/$state", "ready")
 
     def set_state(self, state: str):
         """Set the device's :homie-attr:`state` attribute on the MQTT broker.

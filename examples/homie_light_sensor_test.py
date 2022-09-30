@@ -29,14 +29,6 @@ print("Using MQTT broker: {}:{}".format(mqtt_settings["broker"], mqtt_settings["
 pool = socketpool.SocketPool(wifi.radio)
 mqtt_client = MQTT(**mqtt_settings, socket_pool=pool)
 
-
-def on_connected(*args):
-    """Callback invoked when connection to broker is made."""
-    print("Connected to the MQTT broker!")
-
-
-mqtt_client.on_connect = on_connected
-
 # create a light_sensor object for analog readings
 light_sensor_pin = board.IO4  # change this accordingly
 light_sensor = analogio.AnalogIn(light_sensor_pin)
@@ -62,6 +54,7 @@ def on_disconnected(client: MQTT, user_data, rc):
 
 
 mqtt_client.on_disconnect = on_disconnected
+mqtt_client.on_connect = lambda *args: print("Connected to the MQTT broker!")
 
 # a forever loop
 try:

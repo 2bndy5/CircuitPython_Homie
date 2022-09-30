@@ -77,13 +77,8 @@ def on_disconnected(client: MQTT, user_data, rc):
     device.begin()
 
 
-def on_connected(*args):
-    """Callback invoked when connection to broker is made."""
-    print("Connected to the MQTT broker!")
-
-
-mqtt_client.on_connect = on_connected
 mqtt_client.on_disconnect = on_disconnected
+mqtt_client.on_connect = lambda *args: print("Connected to the MQTT broker!")
 
 # connect to the broker and publish/subscribe the device's topics
 device.begin()

@@ -158,6 +158,16 @@ html_theme_options = {
         },
     ],
     "toc_title_is_page_title": True,
+    "social": [
+        dict(
+            icon="fontawesome/brands/github",
+            link="https://github.com/2bndy5/CircuitPython_Homie",
+        ),
+        dict(
+            icon="fontawesome/brands/python",
+            link="https://pypi.org/project/circuitpython-homie/",
+        ),
+    ],
 }
 
 object_description_options = [

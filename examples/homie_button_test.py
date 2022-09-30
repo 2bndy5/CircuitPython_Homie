@@ -75,11 +75,6 @@ def change_state(client: MQTT, topic: str, message: str):
 switch_property.callback = change_state
 
 
-def on_connected(*args):
-    """Callback invoked when connection to broker is made."""
-    print("Connected to the MQTT broker!")
-
-
 def on_disconnected(client: MQTT, user_data, rc):
     """Callback invoked when connection to broker is terminated."""
     print("Reconnecting to the broker.")
@@ -88,7 +83,7 @@ def on_disconnected(client: MQTT, user_data, rc):
 
 
 mqtt_client.on_disconnect = on_disconnected
-mqtt_client.on_connect = on_connected
+mqtt_client.on_connect = lambda *args: print("Connected to the MQTT broker!")
 
 # connect to the broker and publish/subscribe the device's topics
 device.begin()

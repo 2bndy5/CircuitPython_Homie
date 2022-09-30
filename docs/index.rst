@@ -21,9 +21,8 @@
 
 .. toctree::
     :hidden:
-    :caption: Tutorials
 
-    tutorials/openhab
+    tutorials/intro
 
 .. toctree::
     :hidden:

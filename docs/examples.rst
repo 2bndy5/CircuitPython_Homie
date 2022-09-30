@@ -26,7 +26,11 @@ In this secrets module should be 2 `dict`\ s:
     mqtt_settings = dict(
         broker="openhabian",  # the broker's hostname or IP address
         port=1883,  # the broker's port
+        username="user_name",
+        password="user_password",
     )
+
+The MQTT username and password may not be required if you skipped :ref:`mqtt_user_password`.
 
 Dependencies
 ************

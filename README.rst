@@ -12,7 +12,7 @@ Introduction
     :target: https://codecov.io/gh/2bndy5/CircuitPython_Homie
     :alt: Test Code Coverage
 
-Homie specifications for MQTT implemented in CircuitPython
+Homie v4 specifications for MQTT implemented in CircuitPython
 
 .. image:: https://homieiot.github.io/img/works-with-homie.svg
     :alt: Works with MQTT Homie
