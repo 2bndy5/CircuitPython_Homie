@@ -15,7 +15,7 @@ class ShimMQTT:
 
     def __init__(self, host: str, port: int = 1883) -> None:
         self.host, self.port = (host, port)
-        self._connected = False
+        self._connected = True  # just for better coverage
         self._log: Dict[str, Any] = dict(publish=[], subscribe=[])
         self.keep_alive = 0
 
