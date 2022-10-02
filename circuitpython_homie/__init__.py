@@ -404,10 +404,11 @@ class HomieDevice:
 
         :param prop: the instance object representing the device node's property.
         :param value: The new value for the property. The data type passed here will
-            depend on type of `HomieProperty` (specified by the ``prop`` parameter) for
-            which it is being applied.
+            depend on the type of `HomieProperty` (specified by the ``prop`` parameter)
+            for which it is being applied.
 
-            .. seealso:: The :doc:`recipes` have validators implemented accordingly.
+            .. seealso:: The :doc:`recipes` have derivatives of the `HomieProperty`
+                class with validators implemented accordingly.
         :param multi_node: Set this to `True` if the property is associated with
             multiple device `nodes`. By default, only the first node found in
             association is updated on the MQTT broker.

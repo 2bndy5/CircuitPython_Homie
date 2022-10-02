@@ -126,12 +126,12 @@ The Mosquitto broker uses a password file to store these values securely.
 4. :std:option:`systemctl restart` (or :std:option:`systemctl start`) to force the broker to use
    the updated configuration.
 
-.. admonition:: Enabling SSL
-    :class: check
+Enabling SSL/TLS support
+------------------------
 
-    If desired, you can enable SSL support in your broker for additional security and
-    anti-corruption of data. Since this is all rather technical and a bit more involved, I would
-    recommend following `Steve's Internet Guide <http://www.steves-internet-guide.com/mosquitto-tls/>`_.
+If desired, you can enable SSL/TLS support in your broker for additional security and
+anti-corruption of data. Since this is all rather technical and a bit more involved, I would
+recommend following `Steve's Internet Guide <http://www.steves-internet-guide.com/mosquitto-tls/>`_.
 
 MQTT Explorer
 -------------

@@ -243,7 +243,7 @@ class PropertyBool(HomieProperty):
     |param_intro|
 
     - `datatype` attribute is set to :python:`"boolean"` |param_immutable|
-    - ``init_value`` is set to :python:`"false"` |param_mutable|
+    - ``init_value`` is set to `False` |param_mutable|
     """
 
     def __init__(

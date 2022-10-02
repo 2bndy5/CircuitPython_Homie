@@ -11,13 +11,14 @@ Introduction
 .. image:: https://codecov.io/gh/2bndy5/CircuitPython_Homie/branch/main/graph/badge.svg?token=FOEW7PBQG8
     :target: https://codecov.io/gh/2bndy5/CircuitPython_Homie
     :alt: Test Code Coverage
+.. image:: https://static.pepy.tech/personalized-badge/circuitpython-homie?period=total&units=international_system&left_color=grey&right_color=blue&left_text=PyPI%20Downloads
+    :target: https://pepy.tech/project/circuitpython-homie
 
 Homie v4 specifications for MQTT implemented in CircuitPython
 
 .. image:: https://homieiot.github.io/img/works-with-homie.svg
     :alt: Works with MQTT Homie
     :target: https://homieiot.github.io/
-    :width: 50%
 
 Dependencies
 ------------

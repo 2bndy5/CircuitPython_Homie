@@ -1,13 +1,15 @@
 Tutorials
 =========
 
-To aid with user setup, these docs are complete with tutorials about
+To aid with user setup, this documentation is complete with tutorials about
 
 .. toctree::
     :maxdepth: 1
 
     mosquitto
     openhab
+
+.. _systemctl:
 
 Controlling a system service in Linux (``systemctl``)
 -----------------------------------------------------

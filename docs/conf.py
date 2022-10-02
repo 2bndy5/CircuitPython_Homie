@@ -19,6 +19,7 @@ extensions = [
     "sphinx.ext.intersphinx",
     "sphinx.ext.viewcode",
     "sphinxcontrib.details.directive",
+    # "sphinx_paramlinks",
     "sphinx_immaterial",
     "sphinx_immaterial.graphviz",
 ]
@@ -177,20 +178,15 @@ rst_prolog = """
 .. role:: python(code)
    :language: python
    :class: highlight
-.. role:: homie-dev(code)
-   :language: text
+.. role:: homie-dev(literal)
    :class: homie-dev
-.. role:: homie-attr(code)
-   :language: text
+.. role:: homie-attr(literal)
    :class: homie-attr
-.. role:: homie-val(code)
-   :language: text
+.. role:: homie-val(literal)
    :class: homie-val
-.. role:: homie-prop(code)
-   :language: text
+.. role:: homie-prop(literal)
    :class: homie-prop
-.. role:: homie-node(code)
-   :language: text
+.. role:: homie-node(literal)
    :class: homie-node
 .. _OpenHAB: https://www.openhab.org/
 """
