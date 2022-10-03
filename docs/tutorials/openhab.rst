@@ -5,6 +5,16 @@
     :class: oh-green oh
 .. role:: oh-blue(literal)
     :class: oh-blue oh
+.. role:: oh-orange(literal)
+    :class: oh-orange oh
+
+.. _MQTT binding: https://www.openhab.org/addons/bindings/mqtt/
+.. _MQTT Homie binding: https://www.openhab.org/addons/bindings/mqtt.homie/
+.. _Simple test: ../examples.html#simple-test
+.. |click| replace:: Click or tap
+.. |oh-thing| replace:: OpenHAB Thing
+.. |oh-item| replace:: OpenHAB Item
+.. |homie-dev| replace:: Homie Device
 
 Using Homie with OpenHAB_
 =========================
@@ -37,10 +47,6 @@ the interface. The rest of this tutorial will assume that you are logged into th
 with an OpenHAB administrator account. This should have been covered in the
 `OpenHAB Getting Started instructions`_
 
-.. _MQTT binding: https://www.openhab.org/addons/bindings/mqtt/
-.. _MQTT Homie binding: https://www.openhab.org/addons/bindings/mqtt.homie/
-.. |click| replace:: Click or tap
-
 .. tip::
   Some of the images here are hyperlinked to the http://openhabian:8080 domain for quicker access.
   If you are using a different hostname or a static IP address, then you can adjust the address in
@@ -70,38 +76,38 @@ you don't see the `MQTT binding`_.
 |click| the :homie-val:`install` button to install the binding and add MQTT capability to your
 OpenHAB server.
 
-.. md-admonition::
-    :class: info
+`Installing the MQTT binding`_ in OpenHAB will also install Homie support automatically. More info
+about Homie support can be found at the `MQTT Homie binding`_ page.
 
-    `Installing the MQTT binding`_ in OpenHAB will also install Homie support automatically. More info
-    about Homie support can be found at the `MQTT Homie binding`_ page.
+.. admonition:: Homie v3 vs Homie v4
+    :class: missing
+    :name: v3-vs-v4
 
-    .. md-admonition::
-        :class: missing
+    The OpenHAB `MQTT Homie binding`_ will say that it supports Homie v3.x specifications. This library
+    implements Homie v4 specifications. Homie v4 is mostly backward compatible with Homie v3 with
+    the following exceptions:
 
-        The OpenHAB `MQTT Homie binding`_ will say that it supports Homie v3.x specifications. This library
-        implements Homie v4 specifications. Homie v4 is mostly backward compatible with Homie v3 with
-        the following exceptions:
+    - `Node Arrays <https://homieiot.github.io/specification/spec-core-v3_0_1/#arrays>`_
+      are not supported in Homie v4. Incidentally, Arrays aren't implemented in OpenHAB's
+      `MQTT Homie binding`_ because the Homie specification was too vague which is why it was
+      removed in Homie v4 (see `this HomieIoT thread comment
+      <https://github.com/homieiot/convention/issues/90#issuecomment-385425001>`_).
+    - `Device Statistics <https://homieiot.github.io/specification/spec-core-v3_0_1/#device-statistics>`_
+      are not supported in Homie v4. This was removed in Homie v4 in favor of using nodes' properties
+      (see `this HomieIoT discussion <https://github.com/homieiot/convention/issues/102>`_).
 
-        - `Node Arrays <https://homieiot.github.io/specification/spec-core-v3_0_1/#arrays>`_
-          are not supported in Homie v4
-        - `Device Statistics <https://homieiot.github.io/specification/spec-core-v3_0_1/#device-statistics>`_
-          are not supported in Homie v4
-
-        These missing features are memory and process intensive for microcontrollers. At this time,
-        there are no plans to add Homie v3 support for this library.
-
-.. |OH-thing| replace:: OpenHAB Thing
+    These missing features are memory and process intensive for microcontrollers. At this time,
+    there is no plan to add Homie v3 support for this library.
 
 .. _add_broker_as_thing:
 
-Adding the MQTT broker as an |OH-thing|
+Adding the MQTT broker as an |oh-thing|
 ***************************************
 
 After `Installing the MQTT binding`_, navigate back to the settings page and open
 `the "Things" category <http://openhabian:8080/settings/things/>`_. You may think that installing
 the MQTT binding didn't change anything, but automatic discovery of MQTT-capable devices still
-requires an |OH-thing| to represent the MQTT broker.
+requires an |oh-thing| to represent the MQTT broker.
 
 .. |OH_plus| replace:: :oh-blue:`+`
 .. _OH_plus: http://openhabian:8080/settings/things/add
@@ -116,7 +122,7 @@ requires an |OH-thing| to represent the MQTT broker.
    .. image:: ../_static/tutorial_images/mqtt_binding_thing-dark.png
        :class: only-dark align-center
        :target: http://openhabian:8080/settings/things/mqtt
-3. At the top of the list of options that you can add as |OH-thing|\ s, you should see the MQTT broker option.
+3. At the top of the list of options that you can add as |oh-thing|\ s, you should see the MQTT broker option.
    It will have a badge on it that says :oh-blue:`Bridge`. |click| on the MQTT broker option.
 
    .. image:: ../_static/tutorial_images/mqtt_broker_thing-light.png
@@ -175,25 +181,80 @@ requires an |OH-thing| to represent the MQTT broker.
        Hover your mouse (or tap and hold) over the :oh-red:`ERROR` badge to see a tooltip briefly
        explaining the reason for the error.
 
-Adding a Homie Device as an |OH-thing|
+Adding a |homie-dev| as an |oh-thing|
 -----------------------------------------
 
 Once you have finished :ref:`add_broker_as_thing`, you are now ready to start using OpenHAB's automatic
-discovery of Homie Devices. This section should be repeated for any instantiated `HomieDevice`
+discovery of |homie-dev|\ s. This section should be repeated for any instantiated `HomieDevice`
 object.
 
 .. note::
   Once completed, there is no need to repeat these steps again for the same `HomieDevice` object
   unless you have changed the ``device_id`` parameter to the `HomieDevice` constructor. Connecting
-  & disconnecting a Homie Device that are already added as |OH-thing|\ s should be automatically
+  & disconnecting a |homie-dev| that are already added as |oh-thing|\ s should be automatically
   handled by the OpenHAB  `MQTT Homie binding`_.
 
 First lets get a library example running on a circuitPython enabled board (with WiFi support).
 See the :doc:`../examples` to understand how to run a library example. For this tutorial, we'll be
-using the `Simple test <../examples.html#simple-test>`_ example.
+using the `Simple test`_ example.
 
-Once you've got an example running, head over to you OpenHAB dashboard: http://openhabian:8080
-(you may have to replace the hostname ``openhabian`` with the IP address like ``192.168.1.xxx``).
-To see any new Homie devices discovered by the MQTT binding, navigate to "Settings" -> "Things"
-(http://openhabian:8080/settings/things/). At the bottom of the screen, you should see badge-like
-notification titled "Inbox".
+Once you've got an example running on your circuitpython board, The `HomieDevice` must be added to
+OpenHAB as an |oh-thing|. The `HomieProperty` values are used in OpenHAB as a |oh-item|, and each
+|oh-item| must be "linked" to an |oh-thing|'s "channel"
+
+1. To see any new Homie devices discovered by the MQTT binding, navigate to
+   `Settings -> Things <http://openhabian:8080/settings/things/>`_. |click| on the notification
+   titled :oh-red:`Inbox` at the bottom of the screen.
+2. You should see your new `HomieDevice` listed by it's ``device-_id`` (a required parameter in the
+   `HomieDevice` constructor).
+
+   .. image:: ../_static/tutorial_images/discovered_thing-light.png
+       :class: only-light align-center
+   .. image:: ../_static/tutorial_images/discovered_thing-dark.png
+       :class: only-dark align-center
+
+   |click| on the discovered |homie-dev| and select :homie-dev:`Add as Thing` from the pop-up menu.
+   It will ask you for a customized name to be assigned to the |oh-thing|. By default it will use
+   the ``device_id`` if not changed, so this step is optional. |click| the :oh-orange:`OK` button
+   when done.
+3. You should now see the |homie-dev| in your list of |oh-thing|\ s.
+
+   .. image:: ../_static/tutorial_images/homie_thing-light.png
+       :class: only-light align-center
+   .. image:: ../_static/tutorial_images/homie_thing-dark.png
+       :class: only-dark align-center
+
+   To use this |homie-dev|'s properties in the OpenHAB user interfaces, you need to create an
+   |oh-item| for each |homie-dev| property (programmatically instantiated with `HomieProperty` or
+   :doc:`one of its derivatives <../API/recipes>`). Each |oh-item| must be linked to a |homie-dev|
+   property via an |oh-thing|'s channel(s).
+
+   To see the channels, navigate to the configuration of the |oh-thing| that represents your
+   |homie-dev| (in your list of |oh-thing|\ s). |click| on the tab named ``Channels`` at the top of
+   the page.
+
+   You should now see a list of properties belonging to your |homie-dev|. Using the `Simple test`_
+   example, this list only has a ``color`` property. There are various ways to create |oh-item|\ s
+   from the |oh-thing|'s ``Channels`` configuration page. Choosing 1 will depend on how you wish to
+   craft your OpenHAB User Interface, Dashboard, or Sitemap.
+
+   - |click| on an available channel and select ``Add link to Item...``, then select
+     ``Create a new Item``. This will create a single |oh-item|, but the item's ID must be unique in
+     OpenHAB (cannot reuse the same ID for multiple |oh-item|\ s linked to the same |oh-thing|'s
+     channel). While this is the most flexible, it can also become the most tedious.
+   - |click| on the button titled :homie-val:`Add points to Model`. This will create the necessary
+     |oh-item|\ (s) and link them to the respective property's channel.
+   - |click| on the button titled :homie-val:`Add Equipment to Model`. This is similar to
+     :homie-val:`Add points to Model`, however the created |oh-item|\ (s) are put into a group that
+     represents a category of equipment.
+
+   .. admonition:: Going Forward
+       :class: check
+
+       It is important to understand `OpenHAB's Semantic Model
+       <https://www.openhab.org/docs/tutorial/model.html>`_ and how they can be used when crafting
+       a User Interface.
+
+       This tutorial does not cover how to use OpenHAB in general. The main point of this tutorial
+       is how to use the CircuitPython_Homie library for automatic discovery of DIY devices in
+       OpenHAB.

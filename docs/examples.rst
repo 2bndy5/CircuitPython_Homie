@@ -66,6 +66,18 @@ Demonstrates using the `PropertyPercent` class to represent a light sensor's dat
     :start-after: pylint: disable=import-error
     :lineno-match:
 
+DHT Sensor test
+-----------------
+
+Demonstrates using the `PropertyPercent` and `PropertyFloat` classes to represent a DHT11 sensor's
+humidity and temperature data (respectively).
+
+.. literalinclude:: ../examples/homie_dht_sensor_test.py
+    :caption: examples/homie_dht_sensor_test.py
+    :linenos:
+    :start-after: pylint: disable=import-error
+    :lineno-match:
+
 Clock test
 ------------
 

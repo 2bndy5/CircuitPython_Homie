@@ -297,10 +297,13 @@ class HomieDevice:
         the given input.
     """
 
-    #: The :homie-attr:`implementation` attribute is global to all instantiated devices.
     implementation = "CircuitPython on " + uname()[0]
+    """The :homie-attr:`implementation` attribute used for all `HomieDevice` instances
+    (class attribute). The platform specified by default is taken from
+    :attr:`~os._Uname.sysname`.
+    """
 
-    #: The base topic used for all Homie devices.
+    #: The base topic used for all `HomieDevice` instances (class attribute).
     base_topic = "homie"
 
     def __init__(self, client: MQTT, name: str, device_id: str):

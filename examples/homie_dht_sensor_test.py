@@ -1,16 +1,16 @@
-"""A simple example of broadcasting a light sensor's data as a percentage.
+"""A simple example of broadcasting a DHT11 sensor's data.
 
-This was tested on a UnexpectedMaker FeatherS2 board.
+This was tested on a Adafruit QtPy ESP32-S2.
 """
 # pylint: disable=import-error,no-member,unused-argument,invalid-name
 import time
-import analogio
 import board
 import socketpool  # type: ignore
 import wifi  # type: ignore
 from adafruit_minimqtt.adafruit_minimqtt import MQTT, MMQTTException
+import adafruit_dht
 from circuitpython_homie import HomieDevice, HomieNode
-from circuitpython_homie.recipes import PropertyPercent
+from circuitpython_homie.recipes import PropertyFloat, PropertyPercent
 
 # Get wifi details and more from a secrets.py file
 try:
@@ -30,17 +30,23 @@ pool = socketpool.SocketPool(wifi.radio)
 mqtt_client = MQTT(**mqtt_settings, socket_pool=pool)
 
 # create a light_sensor object for analog readings
-light_sensor_pin = board.IO4  # change this accordingly
-light_sensor = analogio.AnalogIn(light_sensor_pin)
+dht_in = board.A3  # change this accordingly
+dht_sensor = adafruit_dht.DHT11(dht_in)
+dht_sensor.measure()  # update current data for Homie init
 
 # create the objects that describe our device
-device = HomieDevice(mqtt_client, "my device name", "lib-light-sensor-test-id")
-ambient_light_node = HomieNode("ambient-light", "Light Sensor")
-ambient_light_property = PropertyPercent("brightness")
+device = HomieDevice(mqtt_client, "my device name", "lib-dht-sensor-test-id")
+dht_node = HomieNode("DHT11", "temperature/humidity sensor")
+dht_temperature_property = PropertyFloat(
+    "temperature", init_value=dht_sensor.temperature, unit="°F"
+)
+dht_humidity_property = PropertyPercent(
+    "humidity", datatype="integer", init_value=dht_sensor.humidity
+)
 
 # append the objects to the device's attributes
-ambient_light_node.properties.append(ambient_light_property)
-device.nodes.append(ambient_light_node)
+dht_node.properties.extend([dht_temperature_property, dht_humidity_property])
+device.nodes.append(dht_node)
 
 
 def on_disconnected(client: MQTT, user_data, rc):
@@ -62,17 +68,21 @@ try:
     while True:
         try:
             now = time.time()
-            if now - refresh_last > 0.5:  # refresh every 0.5 seconds
+            if now - refresh_last > 2:  # refresh every 2 seconds
                 refresh_last = now
-                assert mqtt_client.is_connected()
-                value = device.set_property(
-                    ambient_light_property, light_sensor.value / 65535 * 100
+                mqtt_client.loop()
+                dht_sensor.measure()  # update current data
+                temp = device.set_property(
+                    dht_temperature_property, dht_sensor.temperature
                 )
-                print("light sensor value:", value, end="\r")
+                print("Temp:", temp, dht_temperature_property.unit, end=" ")
+                humid = device.set_property(dht_humidity_property, dht_sensor.humidity)
+                print("Humidity:", humid, dht_humidity_property.unit, end="\r")
         except MMQTTException:
             print("\n!!! Connection with broker is lost.")
 except KeyboardInterrupt:
     device.set_state("disconnected")
     print()  # move cursor to next line
     mqtt_client.on_disconnect = lambda *args: print("Disconnected from broker")
-    mqtt_client.disconnect()
+    mqtt_client.deinit()
+    dht_sensor.exit()

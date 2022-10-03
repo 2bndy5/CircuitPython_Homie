@@ -63,7 +63,11 @@ a code.oh {
 
 code.oh-red,
 a code.oh-red {
-  background-color: hsl(14, 100%, 50%);
+  background-color: hsl(3, 100%, 59%);
+}
+
+code.oh-orange {
+  background-color: hsl(14, 80%, 50%);
 }
 
 code.oh-green {

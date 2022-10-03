@@ -78,8 +78,8 @@ switch_property.callback = change_state
 def on_disconnected(client: MQTT, user_data, rc):
     """Callback invoked when connection to broker is terminated."""
     print("Reconnecting to the broker.")
-    client.connect()
-    device.begin()
+    client.reconnect()
+    device.set_state("ready")
 
 
 mqtt_client.on_disconnect = on_disconnected
@@ -111,4 +111,4 @@ try:
 except KeyboardInterrupt:
     device.set_state("disconnected")
     mqtt_client.on_disconnect = lambda *args: print("Disconnected from broker")
-    mqtt_client.disconnect()
+    mqtt_client.deinit()
