@@ -76,7 +76,8 @@ mqtt_client.on_disconnect = on_disconnected
 mqtt_client.on_connect = lambda *args: print("Connected to the MQTT broker!")
 
 # connect to the broker and publish/subscribe the device's topics
-device.begin()
+device.begin(keep_alive=3000)
+# keep_alive must be set to avoid the device's `$state` being considered "lost"
 
 # a forever loop
 try:
@@ -86,7 +87,6 @@ try:
             now = time.time()
             if now - refresh_last > 0.5:  # refresh every 0.5 seconds
                 refresh_last = now
-                assert mqtt_client.is_connected()
                 mqtt_client.loop()
         except MMQTTException:
             print("!!! Connection with broker is lost.")

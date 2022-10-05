@@ -30,7 +30,7 @@ pool = socketpool.SocketPool(wifi.radio)
 mqtt_client = MQTT(**mqtt_settings, socket_pool=pool)
 
 # create a light_sensor object for analog readings
-dht_in = board.A3  # change this accordingly
+dht_in = board.A0  # change this accordingly
 dht_sensor = adafruit_dht.DHT11(dht_in)
 dht_sensor.measure()  # update current data for Homie init
 
@@ -38,7 +38,7 @@ dht_sensor.measure()  # update current data for Homie init
 device = HomieDevice(mqtt_client, "my device name", "lib-dht-sensor-test-id")
 dht_node = HomieNode("DHT11", "temperature/humidity sensor")
 dht_temperature_property = PropertyFloat(
-    "temperature", init_value=dht_sensor.temperature, unit="°F"
+    "temperature", init_value=dht_sensor.temperature * (9 / 5) + 32, unit="°F"
 )
 dht_humidity_property = PropertyPercent(
     "humidity", datatype="integer", init_value=dht_sensor.humidity
@@ -60,7 +60,8 @@ mqtt_client.on_disconnect = on_disconnected
 mqtt_client.on_connect = lambda *args: print("Connected to the MQTT broker!")
 
 # connect to the broker and publish/subscribe the device's topics
-device.begin()
+device.begin(keep_alive=3000)
+# keep_alive must be set to avoid the device's `$state` being considered "lost"
 
 # a forever loop
 try:
@@ -73,9 +74,9 @@ try:
                 mqtt_client.loop()
                 dht_sensor.measure()  # update current data
                 temp = device.set_property(
-                    dht_temperature_property, dht_sensor.temperature
+                    dht_temperature_property, dht_sensor.temperature * (9 / 5) + 32
                 )
-                print("Temp:", temp, dht_temperature_property.unit, end=" ")
+                print("Temp:", temp, dht_temperature_property.unit[-1], end=" ")
                 humid = device.set_property(dht_humidity_property, dht_sensor.humidity)
                 print("Humidity:", humid, dht_humidity_property.unit, end="\r")
         except MMQTTException:

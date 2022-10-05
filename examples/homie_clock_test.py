@@ -81,7 +81,8 @@ mqtt_client.on_disconnect = on_disconnected
 mqtt_client.on_connect = lambda *args: print("Connected to the MQTT broker!")
 
 # connect to the broker and publish/subscribe the device's topics
-device.begin()
+device.begin(keep_alive=3000)
+# keep_alive must be set to avoid the device's `$state` being considered "lost"
 
 # a forever loop
 try:
