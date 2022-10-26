@@ -1,8 +1,4 @@
-# SPDX-FileCopyrightText: 2017 Scott Shawcroft, written for Adafruit Industries
-#
-# SPDX-License-Identifier: MIT
-
-name: Release Actions
+name: Release
 
 on:
   release:
@@ -11,35 +7,33 @@ on:
 
 jobs:
   upload-release-assets:
-    if: github.event_name != 'workflow_dispatch' && github.repository == '2bndy5/CircuitPython_Homie'
     runs-on: ubuntu-latest
     steps:
       - name: Translate Repo Name For Build Tools filename_prefix
         id: repo-name
         run: |
-          echo ::set-output name=repo-name::$(
+          echo repo-name=$(
           echo ${{ github.repository }} |
           awk -F '\/' '{ print tolower($2) }' |
           tr '_' '-'
-          )
+          ) >> $GITHUB_OUTPUT
 
       - name: Translate Repo Name For Build Tools package_prefix
         id: pkg-name
         run: |
-          echo ::set-output name=pkg-name::$(
+          echo pkg-name=$(
           echo ${{ github.repository }} |
           awk -F '\/' '{ print tolower($2) }'
-          )
+          ) >> $GITHUB_OUTPUT
 
       - name: Set up Python 3.x
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: "3.x"
 
       - name: Checkout Current Repo
         uses: actions/checkout@v3
         with:
-          submodules: true
           fetch-depth: 0
 
       - name: Checkout tools repo
@@ -55,17 +49,20 @@ jobs:
       - name: Build assets
         run: circuitpython-build-bundles --filename_prefix ${{ steps.repo-name.outputs.repo-name }} --package_folder_prefix ${{ steps.pkg-name.outputs.pkg-name }} --library_location .
 
-      - name: Upload Release Assets
-        # the 'official' actions version does not yet support dynamically
-        # supplying asset names to upload. @csexton's version chosen based on
-        # discussion in the issue below, as its the simplest to implement and
-        # allows for selecting files with a pattern.
-        # https://github.com/actions/upload-release-asset/issues/4
-        #uses: actions/upload-release-asset@v1.0.1
-        uses: csexton/release-asset-action@master
+      - name: Archive bundles
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/upload-artifact@v3
         with:
-          pattern: "bundles/*"
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          name: bundles
+          path: ${{ github.workspace }}/bundles/
+
+      - name: Upload Release Assets
+        if: github.event_name == 'release'
+        uses: shogo82148/actions-upload-release-asset@v1
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: "bundles/**"
+          asset_name: "bundles"
 
   upload-pypi:
     runs-on: ubuntu-latest
@@ -74,7 +71,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
@@ -97,7 +94,7 @@ jobs:
         run: twine upload --repository testpypi dist/*
 
       - name: Publish package (to PyPI)
-        if: github.event_name != 'workflow_dispatch' && github.repository == '2bndy5/CircuitPython_Homie'
+        if: github.event_name == 'release' && github.repository == '2bndy5/CircuitPython_Homie'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
