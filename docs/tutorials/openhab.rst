@@ -61,8 +61,7 @@ Building off `OpenHAB's "Add a Thing - Simple (Install the Binding)" instruction
 |click| the :homie-val:`show <n> more` button at the bottom of the OpenHAB Distribution list if
 you don't see the `MQTT binding`_.
 
-.. admonition:: Notice
-    :class: example
+.. note::
 
     The `MQTT binding`_ is one of the official OpenHAB addons. It is not a Community addon.
 
@@ -188,11 +187,13 @@ Once you have finished :ref:`add_broker_as_thing`, you are now ready to start us
 discovery of |homie-dev|\ s. This section should be repeated for any instantiated `HomieDevice`
 object.
 
-.. note::
-  Once completed, there is no need to repeat these steps again for the same `HomieDevice` object
-  unless you have changed the ``device_id`` parameter to the `HomieDevice` constructor. Connecting
-  & disconnecting a |homie-dev| that are already added as |oh-thing|\ s should be automatically
-  handled by the OpenHAB  `MQTT Homie binding`_.
+.. admonition:: Only do this once
+    :class: check
+
+    Once completed, there is no need to repeat these steps again for the same `HomieDevice` object
+    unless you have changed the ``device_id`` parameter to the `HomieDevice` constructor. Connecting
+    & disconnecting a |homie-dev| that are already added as |oh-thing|\ s should be automatically
+    handled by the OpenHAB  `MQTT Homie binding`_.
 
 First lets get a library example running on a circuitPython enabled board (with WiFi support).
 See the :doc:`../examples` to understand how to run a library example. For this tutorial, we'll be

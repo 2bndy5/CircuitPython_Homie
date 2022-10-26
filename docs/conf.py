@@ -128,6 +128,11 @@ html_theme_options = {
     "repo_type": "Github",
     "icon": {
         "repo": "fontawesome/brands/github",
+        "admonition": {
+            "note": "material/note-edit-outline",
+            "tip": "material/school",
+            "warning": "octicons/alert-16",
+        },
     },
     "features": [
         "navigation.tabs",
@@ -160,14 +165,31 @@ html_theme_options = {
     ],
     "toc_title_is_page_title": True,
     "social": [
-        dict(
-            icon="fontawesome/brands/github",
-            link="https://github.com/2bndy5/CircuitPython_Homie",
-        ),
-        dict(
-            icon="fontawesome/brands/python",
-            link="https://pypi.org/project/circuitpython-homie/",
-        ),
+        {
+            "icon": "fontawesome/brands/github",
+            "link": "https://github.com/2bndy5/CircuitPython_Homie",
+        },
+        {
+            "icon": "fontawesome/brands/python",
+            "link": "https://pypi.org/project/circuitpython-homie/",
+        },
+        {
+            "icon": "fontawesome/brands/discord",
+            "link": "https://adafru.it/discord",
+        },
+        {
+            "icon": "simple/adafruit",
+            "link": "https://www.adafruit.com/",
+        },
+        {
+            "icon": "simple/sparkfun",
+            "link": "https://www.sparkfun.com/",
+        },
+        {
+            "name": "CircuitPython Downloads",
+            "icon": "octicons/download-24",
+            "link": "https://circuitpython.org",
+        },
     ],
 }
 

@@ -74,7 +74,7 @@ The Mosquitto broker uses a password file to store these values securely.
    The above command creates a password file named ``pswd.txt`` for a user named ``username``.
 
    .. details:: Adding another user
-       :class: info
+       :class: check
 
        Use the ``-b`` switch to add more users:
 
@@ -82,7 +82,7 @@ The Mosquitto broker uses a password file to store these values securely.
 
            mosquitto_passwd -b pswd.txt other_username user_password
    .. details:: Removing a user
-       :class: error
+       :class: fail
 
        Use the ``-D`` switch to remove a user:
 
