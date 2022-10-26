@@ -22,11 +22,7 @@ import re
 from adafruit_minimqtt.adafruit_minimqtt import MQTT, MMQTTException  # type: ignore
 
 
-try:
-    from ._version import __version__  # type: ignore
-except ImportError:
-    __version__ = "0.0.0+auto.0"
-
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/2bndy5/CircuitPython_Homie.git"
 
 DEVICE_STATES = [
