@@ -61,7 +61,7 @@ jobs:
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ github.event.release.upload_url }}
-          asset_path: "bundles/**"
+          asset_path: "bundles/*"
 
   upload-pypi:
     runs-on: ubuntu-latest
