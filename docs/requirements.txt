@@ -1,6 +1,2 @@
-# SPDX-FileCopyrightText: 2021 Kattni Rembor for Adafruit Industries
-#
-# SPDX-License-Identifier: Unlicense
-
-sphinx-immaterial
+git+https://github.com/jbms/sphinx-immaterial.git@add-comments-meta-data
 sphinxcontrib-details-directive

@@ -1,4 +1,9 @@
 
+:comments:
+
+Using Homie with OpenHAB
+=========================
+
 .. role:: oh-red(literal)
     :class: oh-red oh
 .. role:: oh-green(literal)
@@ -15,9 +20,6 @@
 .. |oh-thing| replace:: OpenHAB Thing
 .. |oh-item| replace:: OpenHAB Item
 .. |homie-dev| replace:: Homie Device
-
-Using Homie with OpenHAB_
-=========================
 
 OpenHAB_ is a Java based software that can be used on a computer connected to your Local Area
 Network (LAN) to monitor (or control) various "smart devices" in your home (or building).
