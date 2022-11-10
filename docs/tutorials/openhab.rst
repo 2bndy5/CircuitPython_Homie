@@ -1,5 +1,8 @@
 
-:comments:
+:show-comments:
+
+.. meta::
+    :og\:title: OpenHAB Tutorial
 
 Using Homie with OpenHAB
 =========================
