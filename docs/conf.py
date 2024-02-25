@@ -125,7 +125,6 @@ html_title = "CircuitPython-Homie"
 html_theme_options = {
     "repo_url": "https://github.com/2bndy5/CircuitPython_Homie",
     "repo_name": "CircuitPython_Homie",
-    "repo_type": "Github",
     "icon": {
         "repo": "fontawesome/brands/github",
         "admonition": {
